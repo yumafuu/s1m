@@ -8,7 +8,7 @@ import (
 func BuildParameterTree(
 	parameters map[string]any,
 	infoView *tview.TextView,
-	valueView *tview.TextView,
+	valueView *tview.TextArea,
 ) *tview.TreeView {
 	root := tview.NewTreeNode(".")
 

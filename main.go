@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/YumaFuu/ssm-tui/aws/ssm"
-	component "github.com/YumaFuu/ssm-tui/node"
+	component "github.com/YumaFuu/ssm-tui/component"
 	"github.com/YumaFuu/ssm-tui/ui"
 	"github.com/atotto/clipboard"
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
@@ -36,6 +36,13 @@ func main() {
 		infoView,
 		valueView,
 	)
+	confirmView := component.BuildConfirmModalView()
+	layout := ui.BuildLayout(
+		tree,
+		infoView,
+		valueView,
+		confirmView,
+	)
 
 	// // Function to display information of the selected node
 	displayNodeInfo := func(node *tview.TreeNode) {
@@ -45,6 +52,7 @@ func main() {
 		}
 		if len(node.GetChildren()) != 0 {
 			infoView.SetText("Not a parameter")
+			valueView.SetText("", false)
 			return
 		}
 		param := node.GetReference().(types.Parameter)
@@ -59,7 +67,7 @@ LastModifiedDate: %s`,
 			param.LastModifiedDate,
 		)
 		infoView.SetText(info)
-		valueView.SetText(*param.Value)
+		valueView.SetText(*param.Value, true)
 	}
 
 	// Capture the cursor movement
@@ -80,26 +88,70 @@ LastModifiedDate: %s`,
 	})
 
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		if event.Rune() == 'c' {
+		if event.Key() == tcell.KeyRune && app.GetFocus() == tree {
+			// Treeにフォーカスがあるとき
 			node := tree.GetCurrentNode()
-			if node != nil && len(node.GetChildren()) == 0 {
-				param := node.GetReference().(types.Parameter)
-				if err := clipboard.WriteAll(*param.Value); err != nil {
-					infoView.SetText(fmt.Sprintf("[red]Error copying to clipboard: %s", err))
-				} else {
-					infoView.SetText("[green]Value copied to clipboard")
+
+			switch event.Rune() {
+			case 'c':
+				if node != nil && len(node.GetChildren()) == 0 {
+					param := node.GetReference().(types.Parameter)
+					if err := clipboard.WriteAll(*param.Value); err != nil {
+						infoView.SetText(
+							fmt.Sprintf("[red]Error copying to clipboard: %s", err),
+						)
+					} else {
+						infoView.SetText("[green]Value copied to clipboard")
+					}
 				}
+			case 'i':
+				if node != nil && len(node.GetChildren()) == 0 {
+					valueView.SetBorderColor(tcell.ColorBlue)
+					app.SetFocus(valueView)
+				}
+			case 'j':
+				tree.Move(1)
+			case 'k':
+				tree.Move(-1)
+			case 'q':
+				app.Stop()
 			}
 			return nil
+		} else if app.GetFocus() == valueView {
+			// ValueViewにフォーカスがあるとき
+			switch event.Key() {
+			case tcell.KeyEsc:
+				valueView.SetBorderColor(tcell.ColorDefault)
+				app.SetFocus(tree)
+
+				node := tree.GetCurrentNode()
+				prev := *node.GetReference().(types.Parameter).Value
+				new := valueView.GetText()
+				if prev != new {
+					layout.ShowPage("confirm")
+					infoView.SetText(
+						fmt.Sprintf("[green]Value updated: \n%s -> %s", prev, new),
+					)
+				}
+			}
+		} else if app.GetFocus() == confirmView {
+			switch event.Key() {
+			case tcell.KeyEsc:
+				app.SetFocus(tree)
+			}
 		}
+
+		// Global
+		if event.Key() == tcell.KeyCtrlC {
+			app.SetFocus(tree)
+			valueView.SetBorderColor(tcell.ColorDefault)
+			return nil
+		}
+
 		return event
 	})
 
-	layout := ui.BuildLayout(tree, infoView, valueView)
-
-	app.SetRoot(layout, true)
-
-	if err := app.Run(); err != nil {
+	if err := app.SetRoot(layout, true).Run(); err != nil {
 		panic(err)
 	}
 }

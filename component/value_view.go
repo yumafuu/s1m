@@ -5,13 +5,15 @@ import (
 	"github.com/rivo/tview"
 )
 
-func BuildValueView() *tview.TextView {
-	// Create a text view to display the selected node's value
+func BuildValueView() *tview.TextArea {
 	v := tview.
-		NewTextView().
-		SetDynamicColors(true).
-		SetWrap(true)
-
+		NewTextArea().
+		SetTextStyle(
+			tcell.
+				StyleDefault.
+				Foreground(tcell.ColorWhite).
+				Background(tcell.ColorDefault),
+		)
 	v.
 		SetBackgroundColor(tcell.ColorDefault).
 		SetBorder(true)

@@ -7,8 +7,9 @@ import (
 func BuildLayout(
 	parameterTree *tview.TreeView,
 	infoView *tview.TextView,
-	valueView *tview.TextView,
-) *tview.Flex {
+	valueView *tview.TextArea,
+	confirmModal *tview.Flex,
+) *tview.Pages {
 
 	param := tview.
 		NewFlex().
@@ -26,5 +27,9 @@ func BuildLayout(
 		SetDirection(tview.FlexRow).
 		AddItem(flex, 0, 1, true)
 
-	return layout
+	pages := tview.NewPages().
+		AddPage("main", layout, true, true).
+		AddPage("confirm", confirmModal, true, false)
+
+	return pages
 }
