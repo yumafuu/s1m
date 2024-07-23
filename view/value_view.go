@@ -1,4 +1,4 @@
-package component
+package view
 
 import (
 	"github.com/gdamore/tcell/v2"

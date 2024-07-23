@@ -1,4 +1,4 @@
-package component
+package view
 
 import (
 	"fmt"

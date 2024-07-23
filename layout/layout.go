@@ -1,4 +1,4 @@
-package ui
+package layout
 
 import (
 	"github.com/rivo/tview"
@@ -8,7 +8,7 @@ func BuildLayout(
 	parameterTree *tview.TreeView,
 	infoView *tview.TextView,
 	valueView *tview.TextArea,
-	confirmModal *tview.Flex,
+	createView *tview.Flex,
 ) *tview.Pages {
 
 	param := tview.
@@ -29,7 +29,7 @@ func BuildLayout(
 
 	pages := tview.NewPages().
 		AddPage("main", layout, true, true).
-		AddPage("confirm", confirmModal, true, false)
+		AddPage("new", createView, true, false)
 
 	return pages
 }

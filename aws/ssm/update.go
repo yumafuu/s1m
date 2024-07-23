@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 )
 
-// updateSSMParameter function to update an SSM parameter
+// Update an SSM parameter
 func Update(
 	ctx context.Context,
 	client *ssm.Client,

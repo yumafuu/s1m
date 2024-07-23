@@ -8,8 +8,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 )
 
+type Parameter = types.Parameter
+
 func List(client *ssm.Client, prefix string) ([]types.Parameter, error) {
-	// パスの下のパラメータを取得
 	params, err := getParametersByPath(client, prefix)
 	if err != nil {
 		return []types.Parameter{}, err

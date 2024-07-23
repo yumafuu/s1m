@@ -1,15 +1,23 @@
-package component
+package view
 
 import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
+type ParameterTree struct {
+	Tree *tview.TreeView
+}
+
+func (p *ParameterTree) Move(i int) {
+	p.Tree.Move(i)
+}
+
 func BuildParameterTree(
 	parameters map[string]any,
 	infoView *tview.TextView,
 	valueView *tview.TextArea,
-) *tview.TreeView {
+) ParameterTree {
 	root := tview.NewTreeNode(".")
 
 	tree := tview.NewTreeView().
@@ -20,7 +28,9 @@ func BuildParameterTree(
 
 	tree.SetBackgroundColor(tcell.ColorDefault)
 
-	return tree
+	return ParameterTree{
+		Tree: tree,
+	}
 }
 
 func addNodes(parent *tview.TreeNode, m map[string]any) {

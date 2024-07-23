@@ -7,15 +7,12 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 )
 
-func NewClient() (*ssm.Client, error) {
-
-	// AWS コンフィグをロード
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+func NewClient(ctx context.Context) (*ssm.Client, error) {
+	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	// SSM クライアントを作成
 	client := ssm.NewFromConfig(cfg)
 
 	return client, nil
