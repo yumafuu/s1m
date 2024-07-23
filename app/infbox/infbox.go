@@ -8,7 +8,7 @@ import (
 
 type InfoBox struct {
 	*tview.TextView
-	ch chan string
+	pubsub pubsub.PubSub
 }
 
 func NewInfoBox(ps pubsub.PubSub) InfoBox {
@@ -20,13 +20,18 @@ func NewInfoBox(ps pubsub.PubSub) InfoBox {
 		SetBackgroundColor(tcell.ColorDefault).
 		SetBorder(true)
 
-	ch := ps.Sub(pubsub.TopicUpdateInfoBox)
-
-	return InfoBox{v, ch}
+	return InfoBox{v, ps}
 }
 
 func (v InfoBox) WaitTopic() {
-	for msg := range v.ch {
-		v.SetText(msg)
+	chUpdate := v.pubsub.Sub(pubsub.TopicUpdateInfoBox)
+
+	for {
+		select {
+		case msg := <-chUpdate:
+			if s, ok := msg.(string); ok {
+				v.SetText(s)
+			}
+		}
 	}
 }

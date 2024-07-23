@@ -8,7 +8,7 @@ import (
 
 type ValueBox struct {
 	*tview.TextArea
-	ch chan string
+	pubsub pubsub.PubSub
 }
 
 func NewValueBox(ps pubsub.PubSub) ValueBox {
@@ -24,13 +24,23 @@ func NewValueBox(ps pubsub.PubSub) ValueBox {
 		SetBackgroundColor(tcell.ColorDefault).
 		SetBorder(true)
 
-	ch := ps.Sub(pubsub.TopicUpdateValueBox)
-
-	return ValueBox{v, ch}
+	return ValueBox{v, ps}
 }
 
 func (v ValueBox) WaitTopic() {
-	for msg := range v.ch {
-		v.SetText(msg, true)
+	chUpdate := v.pubsub.Sub(pubsub.TopicUpdateValueBox)
+	chUpdateBorder := v.pubsub.Sub(pubsub.TopicUpdateValueBoxBorder)
+
+	for {
+		select {
+		case msg := <-chUpdate:
+			if s, ok := msg.(string); ok {
+				v.SetText(s, true)
+			}
+		case msg := <-chUpdateBorder:
+			if b, ok := msg.(tcell.Color); ok {
+				v.SetBorderColor(b)
+			}
+		}
 	}
 }

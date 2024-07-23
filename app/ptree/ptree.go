@@ -1,7 +1,6 @@
 package ptree
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/YumaFuu/ssm-tui/app/pubsub"
@@ -37,6 +36,17 @@ func NewParameterTree(
 	pt := ParameterTree{tree, pubsub}
 	pt.SetChangedFunc(func(node *tview.TreeNode) {
 		pt.displayNodeInfo(node)
+	})
+
+	tree.SetSelectedFunc(func(node *tview.TreeNode) {
+		if len(node.GetChildren()) == 0 {
+			pt.displayNodeInfo(node)
+		}
+		if node.IsExpanded() {
+			node.CollapseAll()
+		} else {
+			node.ExpandAll()
+		}
 	})
 
 	return pt
@@ -80,38 +90,4 @@ func insertPath(m map[string]any, parts []string, param types.Parameter) {
 		m[parts[0]] = make(map[string]any)
 	}
 	insertPath(m[parts[0]].(map[string]any), parts[1:], param)
-}
-
-// // Function to display information of the selected node
-func (pt *ParameterTree) displayNodeInfo(node *tview.TreeNode) {
-	if node == nil {
-		pt.pubsub.Pub("", pubsub.TopicUpdateInfoBox)
-		pt.pubsub.Pub("", pubsub.TopicUpdateValueBox)
-		return
-	}
-	if len(node.GetChildren()) != 0 {
-		pt.pubsub.Pub("", pubsub.TopicUpdateInfoBox)
-		pt.pubsub.Pub("", pubsub.TopicUpdateValueBox)
-		return
-	}
-	param := node.GetReference().(types.Parameter)
-	info := fmt.Sprintf(
-		`Version:          %d
-	Name:             %s
-	Type:             %s
-	LastModifiedDate: %s`,
-		param.Version,
-		*param.Name,
-		param.Type,
-		param.LastModifiedDate,
-	)
-	var s string
-	if param.Type == types.ParameterTypeSecureString {
-		s = "********"
-	} else {
-		s = *param.Value
-	}
-
-	go pt.pubsub.Pub(s, pubsub.TopicUpdateValueBox)
-	go pt.pubsub.Pub(info, pubsub.TopicUpdateInfoBox)
 }
