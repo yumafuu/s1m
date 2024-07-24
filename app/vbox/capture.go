@@ -29,6 +29,10 @@ func (vbox *ValueBox) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 			s := fmt.Sprintf("[green]Value updated: \n%s -> %s", prevValue, newValue)
 			vbox.pubsub.Pub(s, pubsub.TopicUpdateInfoBox)
 		}
+
+		if prev.Type == ssm.ParameterTypeSecureString {
+			vbox.SetText("***************", false)
+		}
 	}
 
 	return nil
