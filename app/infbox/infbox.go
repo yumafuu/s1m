@@ -8,10 +8,10 @@ import (
 
 type InfoBox struct {
 	*tview.TextView
-	pubsub pubsub.PubSub
+	pubsub *pubsub.PubSub
 }
 
-func NewInfoBox(ps pubsub.PubSub) InfoBox {
+func NewInfoBox(ps *pubsub.PubSub) *InfoBox {
 	v := tview.NewTextView().
 		SetDynamicColors(true).
 		SetWrap(true)
@@ -20,7 +20,7 @@ func NewInfoBox(ps pubsub.PubSub) InfoBox {
 		SetBackgroundColor(tcell.ColorDefault).
 		SetBorder(true)
 
-	return InfoBox{v, ps}
+	return &InfoBox{v, ps}
 }
 
 func (v InfoBox) WaitTopic() {

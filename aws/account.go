@@ -6,11 +6,11 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 )
 
-func AwsAccountName() string {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+func ValidAccount(ctx context.Context) error {
+	_, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
-		return ""
+		return err
 	}
 
-	return cfg.AppID
+	return nil
 }

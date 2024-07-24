@@ -13,11 +13,11 @@ import (
 type (
 	App struct {
 		tapp   *tview.Application
-		pubsub pubsub.PubSub
-		layout layout.Layout
-		ptree  ptree.ParameterTree
-		infbox infbox.InfoBox
-		vbox   vbox.ValueBox
+		pubsub *pubsub.PubSub
+		layout *layout.Layout
+		ptree  *ptree.ParameterTree
+		infbox *infbox.InfoBox
+		vbox   *vbox.ValueBox
 	}
 )
 

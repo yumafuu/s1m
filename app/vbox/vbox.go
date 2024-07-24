@@ -8,10 +8,11 @@ import (
 
 type ValueBox struct {
 	*tview.TextArea
-	pubsub pubsub.PubSub
+	pubsub *pubsub.PubSub
+	prev   string
 }
 
-func NewValueBox(ps pubsub.PubSub) ValueBox {
+func NewValueBox(ps *pubsub.PubSub) *ValueBox {
 	v := tview.
 		NewTextArea().
 		SetTextStyle(
@@ -24,10 +25,18 @@ func NewValueBox(ps pubsub.PubSub) ValueBox {
 		SetBackgroundColor(tcell.ColorDefault).
 		SetBorder(true)
 
-	return ValueBox{v, ps}
+	return &ValueBox{v, ps, ""}
 }
 
-func (v ValueBox) WaitTopic() {
+func (v *ValueBox) SetPrev(s string) {
+	v.prev = s
+}
+
+func (v *ValueBox) GetPrev() string {
+	return v.prev
+}
+
+func (v *ValueBox) WaitTopic() {
 	chUpdate := v.pubsub.Sub(pubsub.TopicUpdateValueBox)
 	chUpdateBorder := v.pubsub.Sub(pubsub.TopicUpdateValueBoxBorder)
 
@@ -36,6 +45,7 @@ func (v ValueBox) WaitTopic() {
 		case msg := <-chUpdate:
 			if s, ok := msg.(string); ok {
 				v.SetText(s, true)
+				v.SetPrev(s)
 			}
 		case msg := <-chUpdateBorder:
 			if b, ok := msg.(tcell.Color); ok {

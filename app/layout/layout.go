@@ -12,10 +12,10 @@ type Layout struct {
 }
 
 func NewLayout(
-	parameterTree ptree.ParameterTree,
-	infoBox infbox.InfoBox,
-	valueBox vbox.ValueBox,
-) Layout {
+	parameterTree *ptree.ParameterTree,
+	infoBox *infbox.InfoBox,
+	valueBox *vbox.ValueBox,
+) *Layout {
 	param := tview.
 		NewFlex().
 		SetDirection(tview.FlexRow).
@@ -36,5 +36,5 @@ func NewLayout(
 		AddPage("main", layout, true, true)
 		// AddPage("new", createView, true, false)
 
-	return Layout{pages}
+	return &Layout{pages}
 }

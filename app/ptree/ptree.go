@@ -12,7 +12,7 @@ import (
 
 type ParameterTree struct {
 	*tview.TreeView
-	pubsub pubsub.PubSub
+	pubsub *pubsub.PubSub
 }
 
 const (
@@ -20,9 +20,9 @@ const (
 )
 
 func NewParameterTree(
-	pubsub pubsub.PubSub,
+	pubsub *pubsub.PubSub,
 	params []ssm.Parameter,
-) ParameterTree {
+) *ParameterTree {
 	root := tview.NewTreeNode(RootNodeName)
 
 	tree := tview.NewTreeView().
@@ -33,7 +33,7 @@ func NewParameterTree(
 	nodes := buildMapFromPaths(params)
 	addNodes(root, nodes)
 
-	pt := ParameterTree{tree, pubsub}
+	pt := &ParameterTree{tree, pubsub}
 	pt.SetChangedFunc(func(node *tview.TreeNode) {
 		pt.displayNodeInfo(node)
 	})

@@ -3,7 +3,7 @@ package pubsub
 import "github.com/cskr/pubsub/v2"
 
 type (
-	PubSub = *pubsub.PubSub[string, any]
+	PubSub = pubsub.PubSub[string, any]
 )
 
 const (
@@ -16,6 +16,6 @@ const (
 	TopicAppDraw              = "AppDraw"
 )
 
-func NewPubSub() PubSub {
+func NewPubSub() *PubSub {
 	return pubsub.New[string, any](0)
 }
