@@ -90,16 +90,26 @@ func (pt *ParameterTree) Refresh() error {
 		}
 	})
 
-	for _, node := range pt.root.GetChildren() {
-		param, ok := node.GetReference().(types.Parameter)
-		if !ok {
-			continue
+	var setCurrentNode func(node *tview.TreeNode)
+	setCurrentNode = func(node *tview.TreeNode) {
+		if node == nil {
+			return
 		}
+		if len(node.GetChildren()) == 0 {
+			if param, ok := node.GetReference().(types.Parameter); ok {
+				if *param.Name == currentName {
+					pt.SetCurrentNode(node)
+				}
+			}
+		} else {
+			for _, child := range node.GetChildren() {
+				setCurrentNode(child)
+			}
+		}
+	}
 
-		if *param.Name == currentName {
-			pt.SetCurrentNode(node)
-			break
-		}
+	for _, node := range pt.root.GetChildren() {
+		setCurrentNode(node)
 	}
 
 	return nil
