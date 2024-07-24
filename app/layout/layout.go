@@ -1,4 +1,4 @@
-package app
+package layout
 
 import (
 	"github.com/YumaFuu/ssm-tui/app/infbox"

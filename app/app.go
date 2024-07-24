@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/YumaFuu/ssm-tui/app/infbox"
+	"github.com/YumaFuu/ssm-tui/app/layout"
 	"github.com/YumaFuu/ssm-tui/app/ptree"
 	"github.com/YumaFuu/ssm-tui/app/pubsub"
 	"github.com/YumaFuu/ssm-tui/app/vbox"
@@ -11,9 +12,9 @@ import (
 
 type (
 	App struct {
-		*tview.Application
+		tapp   *tview.Application
 		pubsub pubsub.PubSub
-		layout Layout
+		layout layout.Layout
 		ptree  ptree.ParameterTree
 		infbox infbox.InfoBox
 		vbox   vbox.ValueBox
@@ -21,7 +22,8 @@ type (
 )
 
 func NewApp(params []ssm.Parameter) *App {
-	app := tview.NewApplication()
+	tapp := tview.NewApplication()
+	tapp.EnablePaste(true)
 
 	ps := pubsub.NewPubSub()
 
@@ -29,18 +31,19 @@ func NewApp(params []ssm.Parameter) *App {
 	infbox := infbox.NewInfoBox(ps)
 	vbox := vbox.NewValueBox(ps)
 
-	layout := NewLayout(pst, infbox, vbox)
+	layout := layout.NewLayout(pst, infbox, vbox)
+	tapp.SetRoot(layout, true)
 
 	a := &App{
-		Application: app,
-		pubsub:      ps,
-		layout:      layout,
-		ptree:       pst,
-		infbox:      infbox,
-		vbox:        vbox,
+		tapp:   tapp,
+		pubsub: ps,
+		layout: layout,
+		ptree:  pst,
+		infbox: infbox,
+		vbox:   vbox,
 	}
 
-	a.SetInputCapture(a.InputCapture)
+	a.SetInputCapture()
 	return a
 }
 
@@ -49,7 +52,7 @@ func (a *App) Run() error {
 	go a.vbox.WaitTopic()
 	go a.WaitTopic()
 
-	if err := a.SetRoot(a.layout, true).Run(); err != nil {
+	if err := a.tapp.Run(); err != nil {
 		panic(err)
 	}
 	return nil
@@ -59,15 +62,18 @@ func (a *App) WaitTopic() {
 	chStop := a.pubsub.Sub(pubsub.TopicStopApp)
 	chFocusTree := a.pubsub.Sub(pubsub.TopicSetAppFocusTree)
 	chFocusVBox := a.pubsub.Sub(pubsub.TopicSetAppFocusValueBox)
+	chDraw := a.pubsub.Sub(pubsub.TopicAppDraw)
 
 	for {
 		select {
 		case <-chStop:
-			a.Stop()
+			a.tapp.Stop()
 		case <-chFocusTree:
-			a.SetFocus(a.ptree)
+			a.tapp.SetFocus(a.ptree)
 		case <-chFocusVBox:
-			a.SetFocus(a.vbox)
+			a.tapp.SetFocus(a.vbox)
+		case <-chDraw:
+			a.tapp.Draw()
 		}
 	}
 }

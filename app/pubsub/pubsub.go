@@ -13,6 +13,7 @@ const (
 	TopicSetAppFocusValueBox  = "SetFocusValueBox"
 	TopicStopApp              = "Stop"
 	TopicSetAppFocusTree      = "SetFocusTree"
+	TopicAppDraw              = "AppDraw"
 )
 
 func NewPubSub() PubSub {

@@ -20,7 +20,6 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	switch event.Rune() {
 	case 'c':
 		if node != nil && clen == 0 {
-
 			var s string
 			if err := clipboard.WriteAll(*param.Value); err != nil {
 				s = fmt.Sprintf("[red]Error copying to clipboard: %s", err)

@@ -2,20 +2,25 @@ package app
 
 import (
 	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
 )
 
-func (a *App) InputCapture(event *tcell.EventKey) *tcell.EventKey {
+func (a *App) SetInputCapture() *tview.Application {
+	inputCapture := func(event *tcell.EventKey) *tcell.EventKey {
+		switch a.tapp.GetFocus() {
+		case a.ptree:
+			a.ptree.InputCapture(event)
+		case a.vbox:
+			a.vbox.InputCapture(event)
+		}
 
-	switch a.GetFocus() {
-	case a.ptree:
-		a.ptree.InputCapture(event)
-	case a.vbox:
-		a.vbox.InputCapture(event)
+		if event.Key() == tcell.KeyCtrlC {
+			a.tapp.Stop()
+		}
+
+		return event
 	}
+	a.tapp.SetInputCapture(inputCapture)
 
-	if event.Key() == tcell.KeyCtrlC {
-		a.Stop()
-	}
-
-	return event
+	return a.tapp
 }
