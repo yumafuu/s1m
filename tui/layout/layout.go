@@ -1,9 +1,9 @@
 package layout
 
 import (
-	"github.com/YumaFuu/ssm-tui/app/infbox"
-	"github.com/YumaFuu/ssm-tui/app/ptree"
-	"github.com/YumaFuu/ssm-tui/app/vbox"
+	"github.com/YumaFuu/ssm-tui/tui/infbox"
+	"github.com/YumaFuu/ssm-tui/tui/ptree"
+	"github.com/YumaFuu/ssm-tui/tui/vbox"
 	"github.com/rivo/tview"
 )
 

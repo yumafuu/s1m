@@ -3,7 +3,7 @@ package ptree
 import (
 	"fmt"
 
-	"github.com/YumaFuu/ssm-tui/app/pubsub"
+	"github.com/YumaFuu/ssm-tui/tui/pubsub"
 	"github.com/atotto/clipboard"
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/gdamore/tcell/v2"

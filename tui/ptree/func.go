@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/YumaFuu/ssm-tui/app/pubsub"
+	"github.com/YumaFuu/ssm-tui/tui/pubsub"
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"

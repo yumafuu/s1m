@@ -4,9 +4,9 @@ import (
 	"context"
 	"log"
 
-	"github.com/YumaFuu/ssm-tui/app"
 	"github.com/YumaFuu/ssm-tui/aws"
 	"github.com/YumaFuu/ssm-tui/aws/ssm"
+	"github.com/YumaFuu/ssm-tui/tui"
 )
 
 func main() {
@@ -22,7 +22,7 @@ func main() {
 		panic(err)
 	}
 
-	a, err := app.NewApp(client)
+	a, err := tui.NewTui(client)
 	if err != nil {
 		panic(err)
 	}

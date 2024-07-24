@@ -1,13 +1,13 @@
-package app
+package tui
 
 import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
-func (a *App) SetInputCapture() *tview.Application {
+func (a *Tui) SetInputCapture() *tview.Application {
 	inputCapture := func(event *tcell.EventKey) *tcell.EventKey {
-		switch a.tapp.GetFocus() {
+		switch a.app.GetFocus() {
 		case a.ptree:
 			a.ptree.InputCapture(event)
 		case a.vbox:
@@ -15,12 +15,12 @@ func (a *App) SetInputCapture() *tview.Application {
 		}
 
 		if event.Key() == tcell.KeyCtrlC {
-			a.tapp.Stop()
+			a.app.Stop()
 		}
 
 		return event
 	}
-	a.tapp.SetInputCapture(inputCapture)
+	a.app.SetInputCapture(inputCapture)
 
-	return a.tapp
+	return a.app
 }

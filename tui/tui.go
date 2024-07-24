@@ -1,18 +1,18 @@
-package app
+package tui
 
 import (
-	"github.com/YumaFuu/ssm-tui/app/infbox"
-	"github.com/YumaFuu/ssm-tui/app/layout"
-	"github.com/YumaFuu/ssm-tui/app/ptree"
-	"github.com/YumaFuu/ssm-tui/app/pubsub"
-	"github.com/YumaFuu/ssm-tui/app/vbox"
 	"github.com/YumaFuu/ssm-tui/aws/ssm"
+	"github.com/YumaFuu/ssm-tui/tui/infbox"
+	"github.com/YumaFuu/ssm-tui/tui/layout"
+	"github.com/YumaFuu/ssm-tui/tui/ptree"
+	"github.com/YumaFuu/ssm-tui/tui/pubsub"
+	"github.com/YumaFuu/ssm-tui/tui/vbox"
 	"github.com/rivo/tview"
 )
 
 type (
-	App struct {
-		tapp   *tview.Application
+	Tui struct {
+		app    *tview.Application
 		pubsub *pubsub.PubSub
 		layout *layout.Layout
 		ptree  *ptree.ParameterTree
@@ -22,15 +22,18 @@ type (
 	}
 )
 
-func NewApp(
+func NewTui(
 	client *ssm.Client,
-) (*App, error) {
-	tapp := tview.NewApplication()
-	tapp.EnablePaste(true)
+) (*Tui, error) {
+	app := tview.NewApplication()
+	app.EnablePaste(true)
 
 	ps := pubsub.NewPubSub()
 
-	pst, err := ptree.NewParameterTree(ps, client)
+	pst, err := ptree.NewParameterTree(
+		ps,
+		client,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -39,10 +42,10 @@ func NewApp(
 	vbox := vbox.NewValueBox(ps)
 
 	layout := layout.NewLayout(pst, infbox, vbox)
-	tapp.SetRoot(layout, true)
+	app.SetRoot(layout, true)
 
-	a := &App{
-		tapp:   tapp,
+	a := &Tui{
+		app:    app,
 		pubsub: ps,
 		layout: layout,
 		ptree:  pst,
@@ -55,18 +58,18 @@ func NewApp(
 	return a, nil
 }
 
-func (a *App) Run() error {
+func (a *Tui) Run() error {
 	go a.infbox.WaitTopic()
 	go a.vbox.WaitTopic()
 	go a.WaitTopic()
 
-	if err := a.tapp.Run(); err != nil {
+	if err := a.app.Run(); err != nil {
 		panic(err)
 	}
 	return nil
 }
 
-func (a *App) WaitTopic() {
+func (a *Tui) WaitTopic() {
 	chStop := a.pubsub.Sub(pubsub.TopicStopApp)
 	chFocusTree := a.pubsub.Sub(pubsub.TopicSetAppFocusTree)
 	chFocusVBox := a.pubsub.Sub(pubsub.TopicSetAppFocusValueBox)
@@ -76,13 +79,13 @@ func (a *App) WaitTopic() {
 	for {
 		select {
 		case <-chStop:
-			a.tapp.Stop()
+			a.app.Stop()
 		case <-chFocusTree:
-			a.tapp.SetFocus(a.ptree)
+			a.app.SetFocus(a.ptree)
 		case <-chFocusVBox:
-			a.tapp.SetFocus(a.vbox)
+			a.app.SetFocus(a.vbox)
 		case <-chDraw:
-			a.tapp.Draw()
+			a.app.Draw()
 		case msg := <-chUpdateSSMValue:
 			param, ok := msg.(ssm.Parameter)
 			if !ok {

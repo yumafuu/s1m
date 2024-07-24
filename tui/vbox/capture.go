@@ -3,8 +3,8 @@ package vbox
 import (
 	"fmt"
 
-	"github.com/YumaFuu/ssm-tui/app/pubsub"
 	"github.com/YumaFuu/ssm-tui/aws/ssm"
+	"github.com/YumaFuu/ssm-tui/tui/pubsub"
 	"github.com/gdamore/tcell/v2"
 )
 
