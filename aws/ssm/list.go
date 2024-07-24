@@ -2,6 +2,7 @@ package ssm
 
 import (
 	"context"
+	"sort"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
@@ -10,8 +11,10 @@ import (
 
 type Parameter = types.Parameter
 
-func List(client *ssm.Client, prefix string) ([]types.Parameter, error) {
-	params, err := getParametersByPath(client, prefix)
+func (c Client) List(prefix string) ([]types.Parameter, error) {
+	ctx := context.TODO()
+
+	params, err := c.getParametersByPath(ctx, prefix)
 	if err != nil {
 		return []types.Parameter{}, err
 	}
@@ -19,7 +22,10 @@ func List(client *ssm.Client, prefix string) ([]types.Parameter, error) {
 	return params, nil
 }
 
-func getParametersByPath(client *ssm.Client, path string) ([]types.Parameter, error) {
+func (c Client) getParametersByPath(
+	ctx context.Context,
+	path string,
+) ([]types.Parameter, error) {
 	var params []types.Parameter
 	input := &ssm.GetParametersByPathInput{
 		Path:           aws.String(path),
@@ -27,15 +33,20 @@ func getParametersByPath(client *ssm.Client, path string) ([]types.Parameter, er
 		WithDecryption: aws.Bool(true),
 	}
 
-	paginator := ssm.NewGetParametersByPathPaginator(client, input)
+	paginator := ssm.NewGetParametersByPathPaginator(c, input)
 
 	for paginator.HasMorePages() {
-		output, err := paginator.NextPage(context.TODO())
+		output, err := paginator.NextPage(ctx)
 		if err != nil {
 			return nil, err
 		}
 		params = append(params, output.Parameters...)
 	}
+
+	// sort params by name
+	sort.Slice(params, func(i, j int) bool {
+		return *params[i].Name < *params[j].Name
+	})
 
 	return params, nil
 }

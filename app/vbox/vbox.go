@@ -2,6 +2,7 @@ package vbox
 
 import (
 	"github.com/YumaFuu/ssm-tui/app/pubsub"
+	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -9,7 +10,7 @@ import (
 type ValueBox struct {
 	*tview.TextArea
 	pubsub *pubsub.PubSub
-	prev   string
+	param  types.Parameter
 }
 
 func NewValueBox(ps *pubsub.PubSub) *ValueBox {
@@ -25,15 +26,15 @@ func NewValueBox(ps *pubsub.PubSub) *ValueBox {
 		SetBackgroundColor(tcell.ColorDefault).
 		SetBorder(true)
 
-	return &ValueBox{v, ps, ""}
+	return &ValueBox{v, ps, types.Parameter{}}
 }
 
-func (v *ValueBox) SetPrev(s string) {
-	v.prev = s
+func (v *ValueBox) SetPrev(s types.Parameter) {
+	v.param = s
 }
 
-func (v *ValueBox) GetPrev() string {
-	return v.prev
+func (v *ValueBox) GetPrev() types.Parameter {
+	return v.param
 }
 
 func (v *ValueBox) WaitTopic() {
@@ -43,9 +44,13 @@ func (v *ValueBox) WaitTopic() {
 	for {
 		select {
 		case msg := <-chUpdate:
-			if s, ok := msg.(string); ok {
+			if p, ok := msg.(types.Parameter); ok {
+				s := *p.Value
 				v.SetText(s, true)
-				v.SetPrev(s)
+				v.SetPrev(p)
+			}
+			if b, ok := msg.(string); ok {
+				v.SetText(b, true)
 			}
 		case msg := <-chUpdateBorder:
 			if b, ok := msg.(tcell.Color); ok {

@@ -14,8 +14,11 @@ const (
 	TopicStopApp              = "Stop"
 	TopicSetAppFocusTree      = "SetFocusTree"
 	TopicAppDraw              = "AppDraw"
+	TopicUpdateSSMValue       = "UpdateSSMValue"
+
+	CAPACITY = 10
 )
 
 func NewPubSub() *PubSub {
-	return pubsub.New[string, any](0)
+	return pubsub.New[string, any](CAPACITY)
 }

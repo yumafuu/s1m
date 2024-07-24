@@ -9,16 +9,17 @@ import (
 )
 
 // Update an SSM parameter
-func Update(
-	ctx context.Context,
-	client *ssm.Client,
-	param types.Parameter,
-	newValue string,
+func (c Client) Update(
+	name *string,
+	ptype types.ParameterType,
+	newValue *string,
 ) error {
-	_, err := client.PutParameter(ctx, &ssm.PutParameterInput{
-		Name:      param.Name,
-		Value:     aws.String(newValue),
-		Type:      param.Type,
+	ctx := context.TODO()
+
+	_, err := c.PutParameter(ctx, &ssm.PutParameterInput{
+		Name:      name,
+		Type:      ptype,
+		Value:     aws.String(*newValue),
 		Overwrite: aws.Bool(true),
 	})
 	return err

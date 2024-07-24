@@ -22,11 +22,12 @@ func main() {
 		panic(err)
 	}
 
-	params, err := ssm.List(client, "/")
+	a, err := app.NewApp(client)
 	if err != nil {
 		panic(err)
 	}
-	if err := app.NewApp(params).Run(); err != nil {
+
+	if err := a.Run(); err != nil {
 		log.Fatal(err)
 	}
 }

@@ -18,16 +18,23 @@ type (
 		ptree  *ptree.ParameterTree
 		infbox *infbox.InfoBox
 		vbox   *vbox.ValueBox
+		ssm    *ssm.Client
 	}
 )
 
-func NewApp(params []ssm.Parameter) *App {
+func NewApp(
+	client *ssm.Client,
+) (*App, error) {
 	tapp := tview.NewApplication()
 	tapp.EnablePaste(true)
 
 	ps := pubsub.NewPubSub()
 
-	pst := ptree.NewParameterTree(ps, params)
+	pst, err := ptree.NewParameterTree(ps, client)
+	if err != nil {
+		return nil, err
+	}
+
 	infbox := infbox.NewInfoBox(ps)
 	vbox := vbox.NewValueBox(ps)
 
@@ -41,10 +48,11 @@ func NewApp(params []ssm.Parameter) *App {
 		ptree:  pst,
 		infbox: infbox,
 		vbox:   vbox,
+		ssm:    client,
 	}
 
 	a.SetInputCapture()
-	return a
+	return a, nil
 }
 
 func (a *App) Run() error {
@@ -63,6 +71,7 @@ func (a *App) WaitTopic() {
 	chFocusTree := a.pubsub.Sub(pubsub.TopicSetAppFocusTree)
 	chFocusVBox := a.pubsub.Sub(pubsub.TopicSetAppFocusValueBox)
 	chDraw := a.pubsub.Sub(pubsub.TopicAppDraw)
+	chUpdateSSMValue := a.pubsub.Sub(pubsub.TopicUpdateSSMValue)
 
 	for {
 		select {
@@ -74,6 +83,21 @@ func (a *App) WaitTopic() {
 			a.tapp.SetFocus(a.vbox)
 		case <-chDraw:
 			a.tapp.Draw()
+		case msg := <-chUpdateSSMValue:
+			param, ok := msg.(ssm.Parameter)
+			if !ok {
+				continue
+			}
+
+			if err := a.ssm.Update(
+				param.Name,
+				param.Type,
+				param.Value,
+			); err != nil {
+				a.infbox.SetText(err.Error())
+			}
+
+			a.ptree.Refresh()
 		}
 	}
 }

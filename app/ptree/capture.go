@@ -32,7 +32,7 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 		if node != nil && clen == 0 {
 			pt.pubsub.Pub(true, pubsub.TopicSetAppFocusValueBox)
 			pt.pubsub.Pub(tcell.ColorBlue, pubsub.TopicUpdateValueBoxBorder)
-			pt.pubsub.Pub(*param.Value, pubsub.TopicUpdateValueBox)
+			pt.pubsub.Pub(param, pubsub.TopicUpdateValueBox)
 		}
 	case 'q':
 		pt.pubsub.Pub(nil, pubsub.TopicStopApp)

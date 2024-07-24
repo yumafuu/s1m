@@ -7,7 +7,11 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 )
 
-func NewClient(ctx context.Context) (*ssm.Client, error) {
+type Client struct {
+	*ssm.Client
+}
+
+func NewClient(ctx context.Context) (*Client, error) {
 	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		return nil, err
@@ -15,5 +19,5 @@ func NewClient(ctx context.Context) (*ssm.Client, error) {
 
 	client := ssm.NewFromConfig(cfg)
 
-	return client, nil
+	return &Client{client}, nil
 }
