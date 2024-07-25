@@ -1,6 +1,7 @@
 package layout
 
 import (
+	"github.com/YumaFuu/ssm-tui/tui/cmd"
 	"github.com/YumaFuu/ssm-tui/tui/infbox"
 	"github.com/YumaFuu/ssm-tui/tui/ptree"
 	"github.com/YumaFuu/ssm-tui/tui/vbox"
@@ -8,33 +9,31 @@ import (
 )
 
 type Layout struct {
-	*tview.Pages
+	*tview.Flex
 }
 
 func NewLayout(
-	parameterTree *ptree.ParameterTree,
+	ptree *ptree.ParameterTree,
 	infoBox *infbox.InfoBox,
 	valueBox *vbox.ValueBox,
+	cmdBox *cmd.CmdBox,
 ) *Layout {
-	param := tview.
+	infvbox := tview.
 		NewFlex().
 		SetDirection(tview.FlexRow).
 		AddItem(infoBox, 0, 1, false).
 		AddItem(valueBox, 0, 4, false)
 
-	flex := tview.
+	display := tview.
 		NewFlex().
-		AddItem(parameterTree, 0, 1, true).
-		AddItem(param, 0, 2, false)
+		AddItem(ptree, 0, 1, true).
+		AddItem(infvbox, 0, 2, false)
 
-	layout := tview.
+	withCmd := tview.
 		NewFlex().
 		SetDirection(tview.FlexRow).
-		AddItem(flex, 0, 1, true)
+		AddItem(display, 0, 1, true).
+		AddItem(cmdBox, 2, 1, false)
 
-	pages := tview.NewPages().
-		AddPage("main", layout, true, true)
-		// AddPage("new", createView, true, false)
-
-	return &Layout{pages}
+	return &Layout{withCmd}
 }

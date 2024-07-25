@@ -6,6 +6,13 @@ import (
 	"github.com/rivo/tview"
 )
 
+const (
+	ValueFormat = `Version:          %d
+Name:             %s
+Type:             %s
+LastModifiedDate: %s`
+)
+
 type InfoBox struct {
 	*tview.TextView
 	pubsub *pubsub.PubSub

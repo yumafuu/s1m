@@ -5,17 +5,11 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/YumaFuu/ssm-tui/tui/infbox"
 	"github.com/YumaFuu/ssm-tui/tui/pubsub"
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
-)
-
-const (
-	infoFormat = `Version:          %d
-Name:             %s
-Type:             %s
-LastModifiedDate: %s`
 )
 
 // // Function to display information of the selected node
@@ -38,7 +32,7 @@ func (pt *ParameterTree) displayNodeInfo(node *tview.TreeNode) {
 	}
 
 	info := fmt.Sprintf(
-		infoFormat,
+		infbox.ValueFormat,
 		param.Version,
 		*param.Name,
 		param.Type,
@@ -115,7 +109,7 @@ func (pt *ParameterTree) Refresh() error {
 	return nil
 }
 
-func addNodes(parent *tview.TreeNode, m map[string]any) {
+func addNodes(parent *tview.TreeNode, m Node) {
 	var keys []string
 	for k := range m {
 		keys = append(keys, k)
@@ -126,7 +120,7 @@ func addNodes(parent *tview.TreeNode, m map[string]any) {
 	for _, key := range keys {
 		value := m[key]
 		node := tview.NewTreeNode(key)
-		if subMap, ok := value.(map[string]any); ok {
+		if subMap, ok := value.(Node); ok {
 			node.SetColor(tcell.ColorBlue)
 			node.SetReference(subMap)
 			addNodes(node, subMap)
@@ -139,8 +133,8 @@ func addNodes(parent *tview.TreeNode, m map[string]any) {
 
 // buildMapFromPaths builds a map from a list of SSM parameters.
 // "dir1/dir2/file1", "dir1/dir2/file2" -> { "dir1": { "dir2": { "file1": { ... }, "file2": { ... } } } }
-func buildMapFromPaths(params []types.Parameter) map[string]any {
-	paramTree := make(map[string]any)
+func buildMapFromPaths(params []types.Parameter) Node {
+	paramTree := make(Node)
 	var keys []int
 	for k := range params {
 		keys = append(keys, k)
@@ -158,7 +152,7 @@ func buildMapFromPaths(params []types.Parameter) map[string]any {
 	return paramTree
 }
 
-func insertPath(m map[string]any, parts []string, param types.Parameter) {
+func insertPath(m Node, parts []string, param types.Parameter) {
 	if len(parts) == 0 {
 		return
 	}
@@ -168,7 +162,7 @@ func insertPath(m map[string]any, parts []string, param types.Parameter) {
 	}
 
 	if _, ok := m[parts[0]]; !ok {
-		m[parts[0]] = make(map[string]any)
+		m[parts[0]] = make(Node)
 	}
-	insertPath(m[parts[0]].(map[string]any), parts[1:], param)
+	insertPath(m[parts[0]].(Node), parts[1:], param)
 }

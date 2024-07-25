@@ -9,7 +9,7 @@ import (
 )
 
 // Update an SSM parameter
-func (c Client) Update(
+func (c Client) Put(
 	name *string,
 	ptype types.ParameterType,
 	newValue *string,

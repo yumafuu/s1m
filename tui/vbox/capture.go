@@ -8,32 +8,50 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-func (vbox *ValueBox) InputCapture(event *tcell.EventKey) *tcell.EventKey {
+func (vbox *ValueBox) InputCapture(event *tcell.EventKey) {
 	switch event.Key() {
 	case tcell.KeyEsc:
 		vbox.pubsub.Pub(true, pubsub.TopicSetAppFocusTree)
 		vbox.pubsub.Pub("ESC is pressed", pubsub.TopicAppDraw)
 		vbox.SetBorderColor(tcell.ColorDefault)
 
-		prev := vbox.GetPrev()
-		prevValue := *prev.Value
-		newValue := vbox.GetText()
-		if prevValue != newValue {
-			p := ssm.Parameter{
-				Name:  prev.Name,
-				Value: &newValue,
-				Type:  prev.Type,
+		switch vbox.mode {
+		case ModeUpdate:
+			prev := vbox.GetPrev()
+			prevValue := *prev.Value
+			newValue := vbox.GetText()
+			if prevValue != newValue {
+				p := ssm.Parameter{
+					Name:  prev.Name,
+					Value: &newValue,
+					Type:  prev.Type,
+				}
+				vbox.pubsub.Pub(p, pubsub.TopicPutSSMValue)
+
+				s := fmt.Sprintf("[green]Value updated: \n%s -> %s", prevValue, newValue)
+				vbox.pubsub.Pub(s, pubsub.TopicUpdateInfoBox)
 			}
-			vbox.pubsub.Pub(p, pubsub.TopicUpdateSSMValue)
 
-			s := fmt.Sprintf("[green]Value updated: \n%s -> %s", prevValue, newValue)
+			if prev.Type == ssm.ParameterTypeSecureString {
+				vbox.SetText("***************", false)
+			}
+		case ModeCreate:
+			name := vbox.param.Name
+			t := vbox.param.Type
+			v := vbox.GetText()
+
+			p := ssm.Parameter{
+				Name:  name,
+				Type:  t,
+				Value: &v,
+			}
+			vbox.pubsub.Pub(p, pubsub.TopicNewParamSubmit)
+			s := fmt.Sprintf("[green]New Parameter Created: \n%s\n\n%s", *name, v)
 			vbox.pubsub.Pub(s, pubsub.TopicUpdateInfoBox)
-		}
+			// vbox.pubsub.Pub("New parameter created", pubsub.TopicUpdateInfoBox)
 
-		if prev.Type == ssm.ParameterTypeSecureString {
-			vbox.SetText("***************", false)
+			// vbox.pubsub.Pub(true, pubsub.TopicPtreeRefresh)
+			// vbox.pubsub.Pub(true, pubsub.TopicSetAppFocusTree)
 		}
 	}
-
-	return nil
 }

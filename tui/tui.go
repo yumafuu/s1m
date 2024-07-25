@@ -1,7 +1,10 @@
 package tui
 
 import (
+	"fmt"
+
 	"github.com/YumaFuu/ssm-tui/aws/ssm"
+	"github.com/YumaFuu/ssm-tui/tui/cmd"
 	"github.com/YumaFuu/ssm-tui/tui/infbox"
 	"github.com/YumaFuu/ssm-tui/tui/layout"
 	"github.com/YumaFuu/ssm-tui/tui/ptree"
@@ -18,6 +21,7 @@ type (
 		ptree  *ptree.ParameterTree
 		infbox *infbox.InfoBox
 		vbox   *vbox.ValueBox
+		cmdbox *cmd.CmdBox
 		ssm    *ssm.Client
 	}
 )
@@ -40,8 +44,9 @@ func NewTui(
 
 	infbox := infbox.NewInfoBox(ps)
 	vbox := vbox.NewValueBox(ps)
+	cmdbox := cmd.NewCmdBox(ps)
 
-	layout := layout.NewLayout(pst, infbox, vbox)
+	layout := layout.NewLayout(pst, infbox, vbox, cmdbox)
 	app.SetRoot(layout, true)
 
 	a := &Tui{
@@ -51,6 +56,7 @@ func NewTui(
 		ptree:  pst,
 		infbox: infbox,
 		vbox:   vbox,
+		cmdbox: cmdbox,
 		ssm:    client,
 	}
 
@@ -74,7 +80,10 @@ func (a *Tui) WaitTopic() {
 	chFocusTree := a.pubsub.Sub(pubsub.TopicSetAppFocusTree)
 	chFocusVBox := a.pubsub.Sub(pubsub.TopicSetAppFocusValueBox)
 	chDraw := a.pubsub.Sub(pubsub.TopicAppDraw)
-	chUpdateSSMValue := a.pubsub.Sub(pubsub.TopicUpdateSSMValue)
+	chUpdateSSMValue := a.pubsub.Sub(pubsub.TopicPutSSMValue)
+	chNewParam := a.pubsub.Sub(pubsub.TopicNewParam)
+	chNewParamCommand := a.pubsub.Sub(pubsub.TopicNewParamCommand)
+	chNewParamSubmit := a.pubsub.Sub(pubsub.TopicNewParamSubmit)
 
 	for {
 		select {
@@ -83,6 +92,7 @@ func (a *Tui) WaitTopic() {
 		case <-chFocusTree:
 			a.app.SetFocus(a.ptree)
 		case <-chFocusVBox:
+			a.vbox.SetMode(vbox.ModeUpdate)
 			a.app.SetFocus(a.vbox)
 		case <-chDraw:
 			a.app.Draw()
@@ -92,7 +102,48 @@ func (a *Tui) WaitTopic() {
 				continue
 			}
 
-			if err := a.ssm.Update(
+			if err := a.ssm.Put(
+				param.Name,
+				param.Type,
+				param.Value,
+			); err != nil {
+				a.infbox.SetText(err.Error())
+			}
+
+			a.ptree.Refresh()
+		case dir := <-chNewParam:
+			s, ok := dir.(string)
+			if !ok {
+				continue
+			}
+
+			a.cmdbox.NewParameter(s)
+			a.app.SetFocus(a.cmdbox)
+		case inp := <-chNewParamCommand:
+			param, ok := inp.(ssm.Parameter)
+			if !ok {
+				continue
+			}
+
+			a.infbox.SetText(fmt.Sprintf(
+				infbox.ValueFormat,
+				0,
+				*param.Name,
+				param.Type,
+				"",
+			))
+			a.vbox.SetText("", true)
+			a.vbox.SetMode(vbox.ModeCreate)
+			a.vbox.SetParam(param)
+
+			a.app.SetFocus(a.vbox)
+		case inp := <-chNewParamSubmit:
+			param, ok := inp.(ssm.Parameter)
+			if !ok {
+				continue
+			}
+
+			if err := a.ssm.Put(
 				param.Name,
 				param.Type,
 				param.Value,

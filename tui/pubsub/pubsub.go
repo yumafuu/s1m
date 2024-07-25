@@ -14,9 +14,14 @@ const (
 	TopicStopApp              = "Stop"
 	TopicSetAppFocusTree      = "SetFocusTree"
 	TopicAppDraw              = "AppDraw"
-	TopicUpdateSSMValue       = "UpdateSSMValue"
+	TopicPutSSMValue          = "PutSSMValue"
+	TopicCreateSSMValue       = "CreateSSMValue"
+	TopicNewParam             = "NewParam"
+	TopicNewParamCommand      = "NewParamCommand"
+	TopicNewParamSubmit       = "NewParamSubmit"
+	TopicPtreeRefresh         = "PtreeRefresh"
 
-	CAPACITY = 10
+	CAPACITY = 30
 )
 
 func NewPubSub() *PubSub {

@@ -7,13 +7,16 @@ import (
 	"github.com/rivo/tview"
 )
 
-type ParameterTree struct {
-	*tview.TreeView
-	pubsub   *pubsub.PubSub
-	client   *ssm.Client
-	root     *tview.TreeNode
-	position int
-}
+type (
+	ParameterTree struct {
+		*tview.TreeView
+		pubsub   *pubsub.PubSub
+		client   *ssm.Client
+		root     *tview.TreeNode
+		position int
+	}
+	Node = map[string]any
+)
 
 const (
 	ROOT_NODENAME = "."

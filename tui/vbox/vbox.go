@@ -7,11 +7,22 @@ import (
 	"github.com/rivo/tview"
 )
 
-type ValueBox struct {
-	*tview.TextArea
-	pubsub *pubsub.PubSub
-	param  types.Parameter
-}
+const (
+	ModeUpdate Mode = iota
+	ModeCreate
+)
+
+const ModeDefault = ModeUpdate
+
+type (
+	Mode     int
+	ValueBox struct {
+		*tview.TextArea
+		pubsub *pubsub.PubSub
+		param  types.Parameter
+		mode   Mode
+	}
+)
 
 func NewValueBox(ps *pubsub.PubSub) *ValueBox {
 	v := tview.
@@ -26,7 +37,7 @@ func NewValueBox(ps *pubsub.PubSub) *ValueBox {
 		SetBackgroundColor(tcell.ColorDefault).
 		SetBorder(true)
 
-	return &ValueBox{v, ps, types.Parameter{}}
+	return &ValueBox{v, ps, types.Parameter{}, ModeDefault}
 }
 
 func (v *ValueBox) SetPrev(s types.Parameter) {
@@ -37,6 +48,14 @@ func (v *ValueBox) GetPrev() types.Parameter {
 	return v.param
 }
 
+func (v *ValueBox) SetMode(m Mode) {
+	v.mode = m
+}
+
+func (v *ValueBox) SetParam(p types.Parameter) {
+	v.param = p
+}
+
 func (v *ValueBox) WaitTopic() {
 	chUpdate := v.pubsub.Sub(pubsub.TopicUpdateValueBox)
 	chUpdateBorder := v.pubsub.Sub(pubsub.TopicUpdateValueBoxBorder)
@@ -44,6 +63,8 @@ func (v *ValueBox) WaitTopic() {
 	for {
 		select {
 		case msg := <-chUpdate:
+			v.SetMode(ModeUpdate)
+
 			if p, ok := msg.(types.Parameter); ok {
 				s := *p.Value
 				v.SetText(s, true)

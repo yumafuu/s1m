@@ -2,6 +2,7 @@ package ptree
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/YumaFuu/ssm-tui/tui/pubsub"
 	"github.com/atotto/clipboard"
@@ -36,6 +37,11 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 		}
 	case 'q':
 		pt.pubsub.Pub(nil, pubsub.TopicStopApp)
+	case 'o':
+		p := *param.Name
+		dir := p[:strings.LastIndex(p, "/")] + "/"
+
+		pt.pubsub.Pub(dir, pubsub.TopicNewParam)
 	}
 
 	return nil

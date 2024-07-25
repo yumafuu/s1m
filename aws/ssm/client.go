@@ -8,9 +8,12 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 )
 
-type Client struct {
-	*ssm.Client
-}
+type (
+	Client struct {
+		*ssm.Client
+	}
+	ParameterType = types.ParameterType
+)
 
 const (
 	ParameterTypeSecureString = types.ParameterTypeSecureString
