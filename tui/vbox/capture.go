@@ -1,8 +1,8 @@
 package vbox
 
 import (
-	"github.com/YumaFuu/ssm-tui/aws/ssm"
-	"github.com/YumaFuu/ssm-tui/tui/pubsub"
+	"github.com/YumaFuu/s1m/aws/ssm"
+	"github.com/YumaFuu/s1m/tui/pubsub"
 	"github.com/gdamore/tcell/v2"
 )
 

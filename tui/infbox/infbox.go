@@ -1,7 +1,7 @@
 package infbox
 
 import (
-	"github.com/YumaFuu/ssm-tui/tui/pubsub"
+	"github.com/YumaFuu/s1m/tui/pubsub"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )

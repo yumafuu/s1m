@@ -4,9 +4,9 @@ import (
 	"context"
 	"log"
 
-	"github.com/YumaFuu/ssm-tui/aws"
-	"github.com/YumaFuu/ssm-tui/aws/ssm"
-	"github.com/YumaFuu/ssm-tui/tui"
+	"github.com/YumaFuu/s1m/aws"
+	"github.com/YumaFuu/s1m/aws/ssm"
+	"github.com/YumaFuu/s1m/tui"
 )
 
 func main() {

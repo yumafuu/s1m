@@ -1,10 +1,10 @@
 package layout
 
 import (
-	"github.com/YumaFuu/ssm-tui/tui/cmd"
-	"github.com/YumaFuu/ssm-tui/tui/infbox"
-	"github.com/YumaFuu/ssm-tui/tui/ptree"
-	"github.com/YumaFuu/ssm-tui/tui/vbox"
+	"github.com/YumaFuu/s1m/tui/cmd"
+	"github.com/YumaFuu/s1m/tui/infbox"
+	"github.com/YumaFuu/s1m/tui/ptree"
+	"github.com/YumaFuu/s1m/tui/vbox"
 	"github.com/rivo/tview"
 )
 

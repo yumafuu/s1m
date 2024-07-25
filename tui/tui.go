@@ -1,13 +1,13 @@
 package tui
 
 import (
-	"github.com/YumaFuu/ssm-tui/aws/ssm"
-	"github.com/YumaFuu/ssm-tui/tui/cmd"
-	"github.com/YumaFuu/ssm-tui/tui/infbox"
-	"github.com/YumaFuu/ssm-tui/tui/layout"
-	"github.com/YumaFuu/ssm-tui/tui/ptree"
-	"github.com/YumaFuu/ssm-tui/tui/pubsub"
-	"github.com/YumaFuu/ssm-tui/tui/vbox"
+	"github.com/YumaFuu/s1m/aws/ssm"
+	"github.com/YumaFuu/s1m/tui/cmd"
+	"github.com/YumaFuu/s1m/tui/infbox"
+	"github.com/YumaFuu/s1m/tui/layout"
+	"github.com/YumaFuu/s1m/tui/ptree"
+	"github.com/YumaFuu/s1m/tui/pubsub"
+	"github.com/YumaFuu/s1m/tui/vbox"
 	"github.com/rivo/tview"
 )
 
