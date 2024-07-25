@@ -8,7 +8,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-func (vbox *ValueBox) InputCapture(event *tcell.EventKey) {
+func (vbox *ValueBox) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	switch event.Key() {
 	case tcell.KeyEsc:
 		vbox.pubsub.Pub(true, pubsub.TopicSetAppFocusTree)
@@ -50,4 +50,6 @@ func (vbox *ValueBox) InputCapture(event *tcell.EventKey) {
 		}
 		vbox.SetBorderColor(tcell.ColorDefault)
 	}
+
+	return event
 }

@@ -164,5 +164,10 @@ func insertPath(m Node, parts []string, param types.Parameter) {
 	if _, ok := m[parts[0]]; !ok {
 		m[parts[0]] = make(Node)
 	}
-	insertPath(m[parts[0]].(Node), parts[1:], param)
+
+	if mm, ok := m[parts[0]].(Node); ok {
+		insertPath(mm, parts[1:], param)
+	} else {
+		insertPath(m, parts[1:], param)
+	}
 }

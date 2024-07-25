@@ -10,6 +10,7 @@ import (
 	"github.com/YumaFuu/ssm-tui/tui/ptree"
 	"github.com/YumaFuu/ssm-tui/tui/pubsub"
 	"github.com/YumaFuu/ssm-tui/tui/vbox"
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
@@ -79,6 +80,7 @@ func (a *Tui) WaitTopic() {
 	chStop := a.pubsub.Sub(pubsub.TopicStopApp)
 	chFocusTree := a.pubsub.Sub(pubsub.TopicSetAppFocusTree)
 	chFocusVBox := a.pubsub.Sub(pubsub.TopicSetAppFocusValueBox)
+	chUpdateVBoxBorder := a.pubsub.Sub(pubsub.TopicUpdateValueBoxBorder)
 	chDraw := a.pubsub.Sub(pubsub.TopicAppDraw)
 	chUpdateSSMValue := a.pubsub.Sub(pubsub.TopicPutSSMValue)
 	chNewParam := a.pubsub.Sub(pubsub.TopicNewParam)
@@ -111,6 +113,12 @@ func (a *Tui) WaitTopic() {
 			}
 
 			a.ptree.Refresh()
+		case color := <-chUpdateVBoxBorder:
+			c, ok := color.(tcell.Color)
+			if !ok {
+				continue
+			}
+			a.vbox.SetBorderColor(c)
 		case dir := <-chNewParam:
 			s, ok := dir.(string)
 			if !ok {

@@ -75,10 +75,13 @@ func (v *CmdBox) NewParameterValue(dir string, param ssm.Parameter) {
 	v.SetText(dir)
 
 	v.SetDoneFunc(func(key tcell.Key) {
+
 		s := v.GetText()
 		param.Name = &s
 
 		if key == tcell.KeyEnter {
+			v.SetLabel("")
+			v.pubsub.Pub(tcell.ColorBlue, pubsub.TopicUpdateValueBoxBorder)
 			v.pubsub.Pub(param, pubsub.TopicNewParamCommand)
 		}
 

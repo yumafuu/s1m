@@ -37,7 +37,9 @@ func NewValueBox(ps *pubsub.PubSub) *ValueBox {
 		SetBackgroundColor(tcell.ColorDefault).
 		SetBorder(true)
 
-	return &ValueBox{v, ps, types.Parameter{}, ModeDefault}
+	vbox := &ValueBox{v, ps, types.Parameter{}, ModeDefault}
+
+	return vbox
 }
 
 func (v *ValueBox) SetPrev(s types.Parameter) {

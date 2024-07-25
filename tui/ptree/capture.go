@@ -44,5 +44,10 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 		pt.pubsub.Pub(dir, pubsub.TopicNewParam)
 	}
 
-	return nil
+	switch event.Key() {
+	case tcell.KeyEnter:
+		node.SetExpanded(!node.IsExpanded())
+	}
+
+	return event
 }
