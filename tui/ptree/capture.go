@@ -12,10 +12,7 @@ import (
 
 func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	node := pt.GetCurrentNode()
-	param, ok := node.GetReference().(types.Parameter)
-	if !ok {
-		return nil
-	}
+	param, isParam := node.GetReference().(types.Parameter)
 	clen := len(node.GetChildren())
 
 	switch event.Rune() {
@@ -38,10 +35,21 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	case 'q':
 		pt.pubsub.Pub(nil, pubsub.TopicStopApp)
 	case 'o':
-		p := *param.Name
-		dir := p[:strings.LastIndex(p, "/")] + "/"
+		var dir string
+		if isParam {
+			p := *param.Name
+			dir = p[:strings.LastIndex(p, "/")] + "/"
+		} else {
+			dir = node.GetText() + "/"
+		}
 
 		pt.pubsub.Pub(dir, pubsub.TopicNewParam)
+	case 'd':
+		if node != nil && clen == 0 {
+			pt.pubsub.Pub(param, pubsub.TopicDeleteParam)
+		}
+	case 'r':
+		pt.Refresh()
 	}
 
 	switch event.Key() {

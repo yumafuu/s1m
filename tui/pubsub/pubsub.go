@@ -16,6 +16,7 @@ const (
 	TopicAppDraw              = "AppDraw"
 	TopicPutSSMValue          = "PutSSMValue"
 	TopicCreateSSMValue       = "CreateSSMValue"
+	TopicDeleteParam          = "DeleteParam"
 	TopicNewParam             = "NewParam"
 	TopicNewParamCommand      = "NewParamCommand"
 	TopicNewParamSubmit       = "NewParamSubmit"

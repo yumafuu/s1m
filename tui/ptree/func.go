@@ -116,7 +116,6 @@ func addNodes(parent *tview.TreeNode, m Node) {
 	}
 	sort.Strings(keys)
 
-	// for key, value := range m {
 	for _, key := range keys {
 		value := m[key]
 		node := tview.NewTreeNode(key)

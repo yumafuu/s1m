@@ -11,16 +11,16 @@ const (
 Name:             %s
 Type:             %s
 LastModifiedDate: %s`
-
 	CreateMessageFormat = `[green]New Parameter Created
 Name:             %s
 Type:             %s
 Value:            %s`
-
 	UpdateMessageFormat = `[green]New Parameter Updated
 Name:             %s
 Type:             %s
 Value:            %s`
+	DeleteMessageFormat = `[green]New Parameter Deleted
+Name:             %s`
 )
 
 type InfoBox struct {

@@ -15,10 +15,13 @@ type CmdBox struct {
 }
 
 func NewCmdBox(ps *pubsub.PubSub) *CmdBox {
+	style := tcell.StyleDefault.Background(tcell.ColorReset)
+	style = style.Attributes(tcell.AttrBold)
+
 	v := tview.NewInputField().
 		SetFieldBackgroundColor(tcell.ColorDefault).
 		// TODO: ColorDefault is not working
-		SetLabelStyle(tcell.StyleDefault.Background(tcell.ColorReset)).
+		SetLabelStyle(style).
 		SetPlaceholderStyle(tcell.StyleDefault.Foreground(tcell.ColorGray))
 
 	v.
@@ -31,7 +34,7 @@ func NewCmdBox(ps *pubsub.PubSub) *CmdBox {
 func (v *CmdBox) NewParameter(dir string) {
 	var param ssm.Parameter
 
-	v.NewParameterType(dir, param)
+	v.NewParameterValue(dir, param)
 }
 
 func (v *CmdBox) NewParameterType(dir string, param ssm.Parameter) {
@@ -89,7 +92,7 @@ func (v *CmdBox) NewParameterValue(dir string, param ssm.Parameter) {
 	})
 }
 
-func (v *CmdBox) Confirm(s string, f func()) {
+func (v *CmdBox) Confirm(s string, successor func(), finalizer func()) {
 	v.SetLabel(s + " (y/n): ")
 	v.SetPlaceholder("")
 	v.pubsub.Pub(nil, pubsub.TopicAppDraw)
@@ -97,8 +100,10 @@ func (v *CmdBox) Confirm(s string, f func()) {
 	v.SetDoneFunc(func(key tcell.Key) {
 		if key == tcell.KeyEnter {
 			if v.GetText() == "y" {
-				f()
+				successor()
 			}
 		}
+
+		finalizer()
 	})
 }
