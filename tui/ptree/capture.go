@@ -8,6 +8,7 @@ import (
 	"github.com/atotto/clipboard"
 	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
 )
 
 func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
@@ -37,10 +38,27 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	case 'o':
 		var dir string
 		if isParam {
-			p := *param.Name
-			dir = p[:strings.LastIndex(p, "/")] + "/"
+			n := *param.Name
+			dir = n[:strings.LastIndex(n, "/")] + "/"
 		} else {
-			dir = node.GetText() + "/"
+
+			var f func(*tview.TreeNode) *types.Parameter
+			f = func(n *tview.TreeNode) *types.Parameter {
+				for _, p := range n.GetChildren() {
+					if len(p.GetChildren()) == 0 {
+						if param, ok := p.GetReference().(types.Parameter); ok {
+							return &param
+						}
+					} else {
+						f(p)
+					}
+				}
+				return nil
+			}
+
+			p := f(node)
+			n := *p.Name
+			dir = n[:strings.LastIndex(n, "/")] + "/"
 		}
 
 		pt.pubsub.Pub(dir, pubsub.TopicNewParam)

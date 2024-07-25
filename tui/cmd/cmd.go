@@ -34,7 +34,7 @@ func NewCmdBox(ps *pubsub.PubSub) *CmdBox {
 func (v *CmdBox) NewParameter(dir string) {
 	var param ssm.Parameter
 
-	v.NewParameterValue(dir, param)
+	v.NewParameterType(dir, param)
 }
 
 func (v *CmdBox) NewParameterType(dir string, param ssm.Parameter) {
