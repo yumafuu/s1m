@@ -78,7 +78,9 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 			pt.pubsub.Pub(param, pubsub.TopicDeleteParam)
 		}
 	case 'r':
-		pt.Refresh()
+		if err := pt.Refresh(); err != nil {
+			pt.pubsub.Pub(err, pubsub.TopicUpdateInfoBox)
+		}
 	}
 
 	switch event.Key() {

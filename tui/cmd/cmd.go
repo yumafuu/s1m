@@ -68,7 +68,6 @@ func (v *CmdBox) NewParameterType(dir string, param ssm.Parameter) {
 			v.NewParameterValue(dir, param)
 		}
 	})
-	return
 }
 
 // TODO: Dependency Injection

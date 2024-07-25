@@ -83,7 +83,9 @@ func (a *Tui) WaitTopic() {
 				func() {
 					a.cmdbox.SetLabel("")
 					a.cmdbox.SetText("")
-					a.ptree.Refresh()
+					if err := a.ptree.Refresh(); err != nil {
+						a.infbox.SetText(err.Error())
+					}
 					a.app.SetFocus(a.ptree)
 				},
 			)
@@ -147,7 +149,9 @@ func (a *Tui) WaitTopic() {
 				func() {
 					a.cmdbox.SetLabel("")
 					a.cmdbox.SetText("")
-					a.ptree.Refresh()
+					if err := a.ptree.Refresh(); err != nil {
+						a.infbox.SetText(err.Error())
+					}
 					a.app.SetFocus(a.ptree)
 				},
 			)
@@ -174,7 +178,9 @@ func (a *Tui) WaitTopic() {
 				func() {
 					a.cmdbox.SetLabel("")
 					a.cmdbox.SetText("")
-					a.ptree.Refresh()
+					if err := a.ptree.Refresh(); err != nil {
+						a.infbox.SetText(err.Error())
+					}
 					a.app.SetFocus(a.ptree)
 				},
 			)
