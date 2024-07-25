@@ -13,7 +13,6 @@ func (vbox *ValueBox) InputCapture(event *tcell.EventKey) {
 	case tcell.KeyEsc:
 		vbox.pubsub.Pub(true, pubsub.TopicSetAppFocusTree)
 		vbox.pubsub.Pub("ESC is pressed", pubsub.TopicAppDraw)
-		vbox.SetBorderColor(tcell.ColorDefault)
 
 		switch vbox.mode {
 		case ModeUpdate:
@@ -48,10 +47,7 @@ func (vbox *ValueBox) InputCapture(event *tcell.EventKey) {
 			vbox.pubsub.Pub(p, pubsub.TopicNewParamSubmit)
 			s := fmt.Sprintf("[green]New Parameter Created: \n%s\n\n%s", *name, v)
 			vbox.pubsub.Pub(s, pubsub.TopicUpdateInfoBox)
-			// vbox.pubsub.Pub("New parameter created", pubsub.TopicUpdateInfoBox)
-
-			// vbox.pubsub.Pub(true, pubsub.TopicPtreeRefresh)
-			// vbox.pubsub.Pub(true, pubsub.TopicSetAppFocusTree)
 		}
+		vbox.SetBorderColor(tcell.ColorDefault)
 	}
 }
