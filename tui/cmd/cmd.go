@@ -98,8 +98,9 @@ func (v *CmdBox) Confirm(s string, successor func(), finalizer func()) {
 	v.pubsub.Pub(nil, pubsub.TopicAppDraw)
 
 	v.SetDoneFunc(func(key tcell.Key) {
+		t := v.GetText()
 		if key == tcell.KeyEnter {
-			if v.GetText() == "y" {
+			if t == "y" || t == "Y" || t == ":w" {
 				successor()
 			}
 		}

@@ -174,12 +174,10 @@ func (a *Tui) WaitTopic() {
 				func() {
 					a.cmdbox.SetLabel("")
 					a.cmdbox.SetText("")
-					a.app.SetFocus(a.ptree)
 					a.ptree.Refresh()
+					a.app.SetFocus(a.ptree)
 				},
 			)
-			a.app.Draw()
-
 		}
 	}
 }
