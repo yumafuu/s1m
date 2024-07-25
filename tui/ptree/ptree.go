@@ -41,7 +41,9 @@ func NewParameterTree(
 		root,
 		INIT_POSITION,
 	}
-	pt.Refresh()
+	if err := pt.Refresh(); err != nil {
+		return nil, err
+	}
 
 	return pt, nil
 }

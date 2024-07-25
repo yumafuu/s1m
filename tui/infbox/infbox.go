@@ -44,11 +44,9 @@ func (v InfoBox) WaitTopic() {
 	chUpdate := v.pubsub.Sub(pubsub.TopicUpdateInfoBox)
 
 	for {
-		select {
-		case msg := <-chUpdate:
-			if s, ok := msg.(string); ok {
-				v.SetText(s)
-			}
+		msg := <-chUpdate
+		if s, ok := msg.(string); ok {
+			v.SetText(s)
 		}
 	}
 }
