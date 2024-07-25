@@ -1,4 +1,4 @@
-module github.com/YumaFuu/ssm-tui
+module github.com/YumaFuu/s1m
 
 go 1.22.1
 
