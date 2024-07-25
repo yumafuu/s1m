@@ -23,10 +23,21 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 			if err := clipboard.WriteAll(*param.Value); err != nil {
 				s = fmt.Sprintf("[red]Error copying to clipboard: %s", err)
 			} else {
-				s = "[green]Value copied to clipboard"
+				s = "[green]Value is copied to clipboard"
 			}
 			pt.pubsub.Pub(s, pubsub.TopicUpdateInfoBox)
 		}
+	case 'y':
+		if node != nil && clen == 0 {
+			var s string
+			if err := clipboard.WriteAll(*param.Name); err != nil {
+				s = fmt.Sprintf("[red]Error copying to clipboard: %s", err)
+			} else {
+				s = fmt.Sprintf("[green]Name `%s` is copied to clipboard", *param.Name)
+			}
+			pt.pubsub.Pub(s, pubsub.TopicUpdateInfoBox)
+		}
+
 	case 'i':
 		if node != nil && clen == 0 {
 			pt.pubsub.Pub(true, pubsub.TopicSetAppFocusValueBox)
