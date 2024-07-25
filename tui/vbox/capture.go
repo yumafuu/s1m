@@ -1,8 +1,6 @@
 package vbox
 
 import (
-	"fmt"
-
 	"github.com/YumaFuu/ssm-tui/aws/ssm"
 	"github.com/YumaFuu/ssm-tui/tui/pubsub"
 	"github.com/gdamore/tcell/v2"
@@ -12,7 +10,6 @@ func (vbox *ValueBox) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	switch event.Key() {
 	case tcell.KeyEsc:
 		vbox.pubsub.Pub(true, pubsub.TopicSetAppFocusTree)
-		vbox.pubsub.Pub("ESC is pressed", pubsub.TopicAppDraw)
 
 		switch vbox.mode {
 		case ModeUpdate:
@@ -26,9 +23,6 @@ func (vbox *ValueBox) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 					Type:  prev.Type,
 				}
 				vbox.pubsub.Pub(p, pubsub.TopicPutSSMValue)
-
-				s := fmt.Sprintf("[green]Value updated: \n%s -> %s", prevValue, newValue)
-				vbox.pubsub.Pub(s, pubsub.TopicUpdateInfoBox)
 			}
 
 			if prev.Type == ssm.ParameterTypeSecureString {
@@ -45,11 +39,10 @@ func (vbox *ValueBox) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 				Value: &v,
 			}
 			vbox.pubsub.Pub(p, pubsub.TopicNewParamSubmit)
-			s := fmt.Sprintf("[green]New Parameter Created: \n%s\n\n%s", *name, v)
-			vbox.pubsub.Pub(s, pubsub.TopicUpdateInfoBox)
 		}
 		vbox.SetBorderColor(tcell.ColorDefault)
 	}
 
+	vbox.pubsub.Pub("ESC is pressed", pubsub.TopicAppDraw)
 	return event
 }

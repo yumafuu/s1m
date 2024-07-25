@@ -75,7 +75,6 @@ func (v *CmdBox) NewParameterValue(dir string, param ssm.Parameter) {
 	v.SetText(dir)
 
 	v.SetDoneFunc(func(key tcell.Key) {
-
 		s := v.GetText()
 		param.Name = &s
 
@@ -83,10 +82,23 @@ func (v *CmdBox) NewParameterValue(dir string, param ssm.Parameter) {
 			v.SetLabel("")
 			v.pubsub.Pub(tcell.ColorBlue, pubsub.TopicUpdateValueBoxBorder)
 			v.pubsub.Pub(param, pubsub.TopicNewParamCommand)
+			v.pubsub.Pub(nil, pubsub.TopicAppDraw)
 		}
 
 		v.SetText("")
 	})
+}
 
-	return
+func (v *CmdBox) Confirm(s string, f func()) {
+	v.SetLabel(s + " (y/n): ")
+	v.SetPlaceholder("")
+	v.pubsub.Pub(nil, pubsub.TopicAppDraw)
+
+	v.SetDoneFunc(func(key tcell.Key) {
+		if key == tcell.KeyEnter {
+			if v.GetText() == "y" {
+				f()
+			}
+		}
+	})
 }

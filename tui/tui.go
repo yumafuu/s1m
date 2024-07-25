@@ -104,15 +104,40 @@ func (a *Tui) WaitTopic() {
 				continue
 			}
 
-			if err := a.ssm.Put(
-				param.Name,
-				param.Type,
-				param.Value,
-			); err != nil {
-				a.infbox.SetText(err.Error())
-			}
+			a.app.SetFocus(a.cmdbox)
+			a.app.Draw()
+			a.cmdbox.Confirm(
+				"Are you sure to Update?",
+				func() {
+					if err := a.ssm.Put(
+						param.Name,
+						param.Type,
+						param.Value,
+					); err != nil {
+						a.infbox.SetText(err.Error())
+					} else {
+						a.infbox.SetText(fmt.Sprintf(
+							infbox.UpdateMessageFormat,
+							*param.Name,
+							param.Type,
+							*param.Value,
+						))
+						a.cmdbox.SetLabel("")
+						a.cmdbox.SetText("")
+						a.ptree.Refresh()
+					}
 
-			a.ptree.Refresh()
+					a.app.SetFocus(a.ptree)
+				})
+			// if err := a.ssm.Put(
+			// 	param.Name,
+			// 	param.Type,
+			// 	param.Value,
+			// ); err != nil {
+			// 	a.infbox.SetText(err.Error())
+			// }
+
+			// a.ptree.Refresh()
 		case color := <-chUpdateVBoxBorder:
 			c, ok := color.(tcell.Color)
 			if !ok {
@@ -151,15 +176,30 @@ func (a *Tui) WaitTopic() {
 				continue
 			}
 
-			if err := a.ssm.Put(
-				param.Name,
-				param.Type,
-				param.Value,
-			); err != nil {
-				a.infbox.SetText(err.Error())
-			}
+			a.app.SetFocus(a.cmdbox)
+			a.cmdbox.Confirm(
+				"Are you sure to Create?",
+				func() {
+					if err := a.ssm.Put(
+						param.Name,
+						param.Type,
+						param.Value,
+					); err != nil {
+						a.infbox.SetText(err.Error())
+					} else {
+						a.infbox.SetText(fmt.Sprintf(
+							infbox.CreateMessageFormat,
+							*param.Name,
+							param.Type,
+							*param.Value,
+						))
+						a.cmdbox.SetLabel("")
+						a.cmdbox.SetText("")
+						a.ptree.Refresh()
+					}
 
-			a.ptree.Refresh()
+					a.app.SetFocus(a.ptree)
+				})
 		}
 	}
 }
