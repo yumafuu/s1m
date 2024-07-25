@@ -7,7 +7,6 @@ S1M is AWS Parameter Store TUI tool.
 
 It allows you to manage your parameters in AWS Parameter Store.
 
-[![GitHub Lint](https://img.shields.io/github/actions/workflow/status/YumaFuu/s1m/golangci.yml)]()
 [![GitHub release](https://img.shields.io/github/v/release/yumafuu/s1m)]()
 
 </div>
