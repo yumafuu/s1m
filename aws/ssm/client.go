@@ -16,9 +16,9 @@ type (
 )
 
 const (
-	ParameterTypeSecureString = types.ParameterTypeSecureString
-	ParameterTypeString       = types.ParameterTypeString
-	ParameterTypeStringList   = types.ParameterTypeStringList
+	ParameterTypeSecureString = ParameterType(types.ParameterTypeSecureString)
+	ParameterTypeString       = ParameterType(types.ParameterTypeString)
+	ParameterTypeStringList   = ParameterType(types.ParameterTypeStringList)
 )
 
 func NewClient(ctx context.Context) (*Client, error) {

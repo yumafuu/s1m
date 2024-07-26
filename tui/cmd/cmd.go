@@ -1,18 +1,22 @@
 package cmd
 
 import (
-	"strings"
-
-	"github.com/YumaFuu/s1m/aws/ssm"
 	"github.com/YumaFuu/s1m/tui/pubsub"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
-type CmdBox struct {
-	*tview.InputField
-	pubsub *pubsub.PubSub
-}
+type (
+	CmdBox struct {
+		*tview.InputField
+		pubsub *pubsub.PubSub
+	}
+
+	ConfirmInput struct {
+		Label     string
+		Successor func()
+	}
+)
 
 func NewCmdBox(ps *pubsub.PubSub) *CmdBox {
 	style := tcell.StyleDefault.Background(tcell.ColorReset)
@@ -31,68 +35,8 @@ func NewCmdBox(ps *pubsub.PubSub) *CmdBox {
 	return &CmdBox{v, ps}
 }
 
-func (v *CmdBox) NewParameter(dir string) {
-	var param ssm.Parameter
-
-	v.NewParameterType(dir, param)
-}
-
-func (v *CmdBox) NewParameterType(dir string, param ssm.Parameter) {
-	v.SetLabel("New Parameter Type: ")
-	v.SetPlaceholder("SecureString, String, StringList")
-	v.SetAutocompleteFunc(func(currentText string) (entries []string) {
-		if len(currentText) == 0 {
-			return
-		}
-		for _, word := range []string{"SecureString", "String", "StringList"} {
-			if strings.HasPrefix(strings.ToLower(word), strings.ToLower(currentText)) {
-				entries = append(entries, word)
-			}
-		}
-		if len(entries) <= 1 {
-			entries = nil
-		}
-		return
-	})
-	v.SetAutocompletedFunc(func(text string, index, source int) bool {
-		if source != tview.AutocompletedNavigate {
-			v.SetText(text)
-		}
-		return source == tview.AutocompletedEnter || source == tview.AutocompletedClick
-	})
-
-	v.SetDoneFunc(func(key tcell.Key) {
-		param.Type = ssm.ParameterType(v.GetText())
-
-		if key == tcell.KeyEnter {
-			v.NewParameterValue(dir, param)
-		}
-	})
-}
-
-// TODO: Dependency Injection
-func (v *CmdBox) NewParameterValue(dir string, param ssm.Parameter) {
-	v.SetLabel("New Parameter Name: ")
-	v.SetPlaceholder("")
-	v.SetText(dir)
-
-	v.SetDoneFunc(func(key tcell.Key) {
-		s := v.GetText()
-		param.Name = &s
-
-		if key == tcell.KeyEnter {
-			v.SetLabel("")
-			v.pubsub.Pub(tcell.ColorBlue, pubsub.TopicUpdateValueBoxBorder)
-			v.pubsub.Pub(param, pubsub.TopicNewParamCommand)
-			v.pubsub.Pub(nil, pubsub.TopicAppDraw)
-		}
-
-		v.SetText("")
-	})
-}
-
-func (v *CmdBox) Confirm(s string, successor func(), finalizer func()) {
-	v.SetLabel(s + " (y/n): ")
+func (v *CmdBox) Confirm(ci ConfirmInput) {
+	v.SetLabel(ci.Label + " (y/n): ")
 	v.SetPlaceholder("")
 	v.pubsub.Pub(nil, pubsub.TopicAppDraw)
 
@@ -100,10 +44,12 @@ func (v *CmdBox) Confirm(s string, successor func(), finalizer func()) {
 		t := v.GetText()
 		if key == tcell.KeyEnter {
 			if t == "y" || t == "Y" || t == ":w" {
-				successor()
+				ci.Successor()
 			}
 		}
 
-		finalizer()
+		v.SetLabel("")
+		v.SetText("")
+		v.pubsub.Pub(nil, pubsub.TopicAppReload)
 	})
 }

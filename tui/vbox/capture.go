@@ -1,48 +1,50 @@
 package vbox
 
 import (
+	"fmt"
+
 	"github.com/YumaFuu/s1m/aws/ssm"
 	"github.com/YumaFuu/s1m/tui/pubsub"
 	"github.com/gdamore/tcell/v2"
 )
 
-func (vbox *ValueBox) InputCapture(event *tcell.EventKey) *tcell.EventKey {
+func (v *ValueBox) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	switch event.Key() {
 	case tcell.KeyEsc:
-		vbox.pubsub.Pub(true, pubsub.TopicSetAppFocusTree)
-
-		switch vbox.mode {
+		switch v.mode {
 		case ModeUpdate:
-			prev := vbox.GetPrev()
+			prev := v.GetPrev()
 			prevValue := *prev.Value
-			newValue := vbox.GetText()
+			newValue := v.GetText()
+			v.pubsub.Pub(fmt.Sprintf("%s -> %s", prevValue, newValue), pubsub.TopicWriteInfoBox)
+			fmt.Println("ESC is pressed")
+
 			if prevValue != newValue {
 				p := ssm.Parameter{
 					Name:  prev.Name,
 					Value: &newValue,
 					Type:  prev.Type,
 				}
-				vbox.pubsub.Pub(p, pubsub.TopicPutSSMValue)
+				v.pubsub.Pub(p, pubsub.TopicUpdateParamSubmit)
 			}
 
 			if prev.Type == ssm.ParameterTypeSecureString {
-				vbox.SetText("***************", false)
+				v.SetText("***************", false)
 			}
 		case ModeCreate:
-			name := vbox.param.Name
-			t := vbox.param.Type
-			v := vbox.GetText()
+			name := v.param.Name
+			t := v.param.Type
+			vl := v.GetText()
 
 			p := ssm.Parameter{
 				Name:  name,
 				Type:  t,
-				Value: &v,
+				Value: &vl,
 			}
-			vbox.pubsub.Pub(p, pubsub.TopicNewParamSubmit)
+			v.pubsub.Pub(p, pubsub.TopicCreateParamSubmit)
 		}
-		vbox.SetBorderColor(tcell.ColorDefault)
 	}
 
-	vbox.pubsub.Pub("ESC is pressed", pubsub.TopicAppDraw)
+	v.pubsub.Pub("ESC is pressed", pubsub.TopicAppDraw)
 	return event
 }

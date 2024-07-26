@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/YumaFuu/s1m/aws/ssm"
+	"github.com/YumaFuu/s1m/tui/cmd"
 	"github.com/YumaFuu/s1m/tui/infbox"
 	"github.com/YumaFuu/s1m/tui/pubsub"
 	"github.com/YumaFuu/s1m/tui/vbox"
@@ -31,40 +32,57 @@ func (a *Tui) SetInputCapture() *tview.Application {
 	return a.app
 }
 
+func (a *Tui) Reload() error {
+	a.app.Draw()
+	if err := a.ptree.Refresh(); err != nil {
+		return err
+	}
+	a.app.SetFocus(a.ptree)
+	a.app.Draw()
+
+	return nil
+}
+
 func (a *Tui) WaitTopic() {
-	chStop := a.pubsub.Sub(pubsub.TopicStopApp)
-	chFocusTree := a.pubsub.Sub(pubsub.TopicSetAppFocusTree)
-	chFocusVBox := a.pubsub.Sub(pubsub.TopicSetAppFocusValueBox)
-	chUpdateVBoxBorder := a.pubsub.Sub(pubsub.TopicUpdateValueBoxBorder)
-	chDraw := a.pubsub.Sub(pubsub.TopicAppDraw)
-	chUpdateSSMValue := a.pubsub.Sub(pubsub.TopicPutSSMValue)
-	chNewParam := a.pubsub.Sub(pubsub.TopicNewParam)
-	chNewParamCommand := a.pubsub.Sub(pubsub.TopicNewParamCommand)
-	chNewParamSubmit := a.pubsub.Sub(pubsub.TopicNewParamSubmit)
+	chReload := a.pubsub.Sub(pubsub.TopicAppReload)
+	chFocusTree := a.pubsub.Sub(pubsub.TopicFocusTree)
+	chFocusVBox := a.pubsub.Sub(pubsub.TopicFocusValueBox)
+	chUpdateParamStart := a.pubsub.Sub(pubsub.TopicUpdateParamStart)
+	chUpdateParamSubmit := a.pubsub.Sub(pubsub.TopicUpdateParamSubmit)
+	chCreateParamStart := a.pubsub.Sub(pubsub.TopicCreateParamStart)
+	chCreateParamSubmit := a.pubsub.Sub(pubsub.TopicCreateParamSubmit)
 	chDeleteParam := a.pubsub.Sub(pubsub.TopicDeleteParam)
 
 	for {
 		select {
-		case <-chStop:
-			a.app.Stop()
+		case <-chReload:
+			if err := a.Reload(); err != nil {
+				a.infbox.SetText(err.Error())
+			}
 		case <-chFocusTree:
 			a.app.SetFocus(a.ptree)
 		case <-chFocusVBox:
 			a.vbox.SetMode(vbox.ModeUpdate)
 			a.app.SetFocus(a.vbox)
-		case <-chDraw:
+		case msg := <-chUpdateParamStart:
+			param, ok := msg.(ssm.Parameter)
+			if !ok {
+				continue
+			}
+
+			a.vbox.WorkflowUpdateParam(param)
+			a.app.SetFocus(a.vbox)
 			a.app.Draw()
-		case msg := <-chUpdateSSMValue:
+		case msg := <-chUpdateParamSubmit:
 			param, ok := msg.(ssm.Parameter)
 			if !ok {
 				continue
 			}
 
 			a.app.SetFocus(a.cmdbox)
-			a.app.Draw()
-			a.cmdbox.Confirm(
-				"Are you sure to Update?",
-				func() {
+			a.cmdbox.Confirm(cmd.ConfirmInput{
+				Label: "[blue]Are you sure to Update?",
+				Successor: func() {
 					if err := a.ssm.Put(
 						param.Name,
 						param.Type,
@@ -79,58 +97,29 @@ func (a *Tui) WaitTopic() {
 							*param.Value,
 						))
 					}
+					a.vbox.SetBorderColor(tcell.ColorDefault)
 				},
-				func() {
-					a.cmdbox.SetLabel("")
-					a.cmdbox.SetText("")
-					if err := a.ptree.Refresh(); err != nil {
-						a.infbox.SetText(err.Error())
-					}
-					a.app.SetFocus(a.ptree)
-				},
-			)
-		case color := <-chUpdateVBoxBorder:
-			c, ok := color.(tcell.Color)
-			if !ok {
-				continue
-			}
-			a.vbox.SetBorderColor(c)
-		case dir := <-chNewParam:
+			})
+
+		case dir := <-chCreateParamStart:
 			s, ok := dir.(string)
 			if !ok {
 				continue
 			}
 
-			a.cmdbox.NewParameter(s)
-			a.app.SetFocus(a.cmdbox)
-		case inp := <-chNewParamCommand:
-			param, ok := inp.(ssm.Parameter)
-			if !ok {
-				continue
-			}
-
-			a.infbox.SetText(fmt.Sprintf(
-				infbox.ValueFormat,
-				0,
-				*param.Name,
-				param.Type,
-				"",
-			))
-			a.vbox.SetText("", true)
-			a.vbox.SetMode(vbox.ModeCreate)
-			a.vbox.SetParam(param)
-
+			a.vbox.WorkflowCreateParam(s)
 			a.app.SetFocus(a.vbox)
-		case msg := <-chNewParamSubmit:
+
+		case msg := <-chCreateParamSubmit:
 			param, ok := msg.(ssm.Parameter)
 			if !ok {
 				continue
 			}
 
 			a.app.SetFocus(a.cmdbox)
-			a.cmdbox.Confirm(
-				"Are you sure to Create?",
-				func() {
+			a.cmdbox.Confirm(cmd.ConfirmInput{
+				Label: "[green]Are you sure to Create?",
+				Successor: func() {
 					if err := a.ssm.Put(
 						param.Name,
 						param.Type,
@@ -145,45 +134,33 @@ func (a *Tui) WaitTopic() {
 							*param.Value,
 						))
 					}
+					a.vbox.SetBorderColor(tcell.ColorDefault)
 				},
-				func() {
-					a.cmdbox.SetLabel("")
-					a.cmdbox.SetText("")
-					if err := a.ptree.Refresh(); err != nil {
-						a.infbox.SetText(err.Error())
-					}
-					a.app.SetFocus(a.ptree)
-				},
-			)
+			})
 		case msg := <-chDeleteParam:
 			param, ok := msg.(ssm.Parameter)
 			if !ok {
 				continue
 			}
+
 			a.app.SetFocus(a.cmdbox)
 			a.cmdbox.Confirm(
-				"Are you sure to Delete?",
-				func() {
-					if err := a.ssm.Delete(
-						param.Name,
-					); err != nil {
-						a.infbox.SetText(err.Error())
-					} else {
-						a.infbox.SetText(fmt.Sprintf(
-							infbox.DeleteMessageFormat,
-							*param.Name,
-						))
-					}
-				},
-				func() {
-					a.cmdbox.SetLabel("")
-					a.cmdbox.SetText("")
-					if err := a.ptree.Refresh(); err != nil {
-						a.infbox.SetText(err.Error())
-					}
-					a.app.SetFocus(a.ptree)
+				cmd.ConfirmInput{
+					Label: "[red]Are you sure to Delete?",
+					Successor: func() {
+						if err := a.ssm.Delete(param.Name); err != nil {
+							a.infbox.SetText(err.Error())
+						} else {
+							a.infbox.SetText(fmt.Sprintf(
+								infbox.DeleteMessageFormat,
+								*param.Name,
+							))
+						}
+						a.vbox.SetBorderColor(tcell.ColorDefault)
+					},
 				},
 			)
+			a.app.Draw()
 		}
 	}
 }

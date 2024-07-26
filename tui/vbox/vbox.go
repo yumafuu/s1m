@@ -10,22 +10,30 @@ import (
 const (
 	ModeUpdate Mode = iota
 	ModeCreate
+	ModeDefault = ModeUpdate
 )
 
-const ModeDefault = ModeUpdate
+const (
+	KeyInput    = "KeyInput"
+	KeyTextArea = "KeyTextArea"
+	KeyList     = "KeyList"
+)
 
 type (
 	Mode     int
 	ValueBox struct {
-		*tview.TextArea
-		pubsub *pubsub.PubSub
-		param  types.Parameter
-		mode   Mode
+		*tview.Pages
+		TextArea *tview.TextArea
+		Input    *tview.InputField
+		ListView *tview.List
+		pubsub   *pubsub.PubSub
+		param    types.Parameter
+		mode     Mode
 	}
 )
 
 func NewValueBox(ps *pubsub.PubSub) *ValueBox {
-	v := tview.
+	textArea := tview.
 		NewTextArea().
 		SetTextStyle(
 			tcell.
@@ -33,11 +41,57 @@ func NewValueBox(ps *pubsub.PubSub) *ValueBox {
 				Foreground(tcell.ColorWhite).
 				Background(tcell.ColorDefault),
 		)
-	v.
+	textArea.
 		SetBackgroundColor(tcell.ColorDefault).
 		SetBorder(true)
 
-	vbox := &ValueBox{v, ps, types.Parameter{}, ModeDefault}
+	input := tview.NewInputField()
+	s := tcell.StyleDefault.Background(tcell.ColorReset)
+	input.
+		SetLabelStyle(s).
+		SetFieldStyle(s).
+		SetBorder(true).
+		SetBackgroundColor(tcell.ColorDefault)
+
+	listView := tview.NewList().
+		SetMainTextStyle(s).
+		SetSecondaryTextStyle(s).
+		SetShortcutStyle(s).
+		SetSelectedStyle(
+			s.
+				Foreground(tcell.ColorWhite).
+				Bold(true).
+				Underline(true),
+		)
+
+	listView.
+		SetBorder(true).
+		SetBackgroundColor(tcell.ColorDefault)
+
+	listView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Rune() {
+		case 'j':
+			listView.SetCurrentItem(listView.GetCurrentItem() + 1)
+		case 'k':
+			listView.SetCurrentItem(listView.GetCurrentItem() - 1)
+		}
+		return event
+	})
+
+	pages := tview.NewPages().
+		AddPage(KeyTextArea, textArea, true, true).
+		AddPage(KeyInput, input, true, false).
+		AddPage(KeyList, listView, true, false)
+
+	vbox := &ValueBox{
+		pages,
+		textArea,
+		input,
+		listView,
+		ps,
+		types.Parameter{},
+		ModeDefault,
+	}
 
 	return vbox
 }
@@ -58,27 +112,28 @@ func (v *ValueBox) SetParam(p types.Parameter) {
 	v.param = p
 }
 
+func (v *ValueBox) GetText() string {
+	return v.TextArea.GetText()
+}
+
+func (v *ValueBox) SetText(s string, b bool) {
+	v.TextArea.SetText(s, b)
+}
+
 func (v *ValueBox) WaitTopic() {
-	chUpdate := v.pubsub.Sub(pubsub.TopicUpdateValueBox)
-	chUpdateBorder := v.pubsub.Sub(pubsub.TopicUpdateValueBoxBorder)
+	chUpdate := v.pubsub.Sub(pubsub.TopicWriteValueBox)
 
-	for {
-		select {
-		case msg := <-chUpdate:
-			v.SetMode(ModeUpdate)
+	for msg := range chUpdate {
+		v.SetMode(ModeUpdate)
 
-			if p, ok := msg.(types.Parameter); ok {
-				s := *p.Value
-				v.SetText(s, true)
-				v.SetPrev(p)
-			}
-			if b, ok := msg.(string); ok {
-				v.SetText(b, true)
-			}
-		case msg := <-chUpdateBorder:
-			if b, ok := msg.(tcell.Color); ok {
-				v.SetBorderColor(b)
-			}
+		if p, ok := msg.(types.Parameter); ok {
+			s := *p.Value
+
+			v.TextArea.SetText(s, true)
+			v.SetPrev(p)
+		}
+		if b, ok := msg.(string); ok {
+			v.TextArea.SetText(b, true)
 		}
 	}
 }
