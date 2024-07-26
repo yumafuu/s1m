@@ -123,20 +123,17 @@ func (v *ValueBox) SetText(s string, b bool) {
 func (v *ValueBox) WaitTopic() {
 	chUpdate := v.pubsub.Sub(pubsub.TopicWriteValueBox)
 
-	for {
-		select {
-		case msg := <-chUpdate:
-			v.SetMode(ModeUpdate)
+	for msg := range chUpdate {
+		v.SetMode(ModeUpdate)
 
-			if p, ok := msg.(types.Parameter); ok {
-				s := *p.Value
+		if p, ok := msg.(types.Parameter); ok {
+			s := *p.Value
 
-				v.TextArea.SetText(s, true)
-				v.SetPrev(p)
-			}
-			if b, ok := msg.(string); ok {
-				v.TextArea.SetText(b, true)
-			}
+			v.TextArea.SetText(s, true)
+			v.SetPrev(p)
+		}
+		if b, ok := msg.(string); ok {
+			v.TextArea.SetText(b, true)
 		}
 	}
 }
