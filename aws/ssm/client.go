@@ -26,9 +26,6 @@ func NewClient(ctx context.Context) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	_ = []ParameterType{
-		"a",
-	}
 
 	client := ssm.NewFromConfig(cfg)
 
