@@ -25,7 +25,7 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 			} else {
 				s = "[green]Value is copied to clipboard"
 			}
-			pt.pubsub.Pub(s, pubsub.TopicUpdateInfoBox)
+			pt.pubsub.Pub(s, pubsub.TopicWriteInfoBox)
 		}
 	case 'y':
 		if node != nil && clen == 0 {
@@ -35,17 +35,19 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 			} else {
 				s = fmt.Sprintf("[green]Name `%s` is copied to clipboard", *param.Name)
 			}
-			pt.pubsub.Pub(s, pubsub.TopicUpdateInfoBox)
+			pt.pubsub.Pub(s, pubsub.TopicWriteInfoBox)
 		}
 
 	case 'i':
 		if node != nil && clen == 0 {
-			pt.pubsub.Pub(true, pubsub.TopicSetAppFocusValueBox)
-			pt.pubsub.Pub(tcell.ColorBlue, pubsub.TopicUpdateValueBoxBorder)
-			pt.pubsub.Pub(param, pubsub.TopicUpdateValueBox)
+			param, ok := node.GetReference().(types.Parameter)
+			if !ok {
+				break
+			}
+
+			pt.pubsub.Pub(param, pubsub.TopicUpdateParamStart)
+			pt.pubsub.Pub(nil, pubsub.TopicAppDraw)
 		}
-	case 'q':
-		pt.pubsub.Pub(nil, pubsub.TopicStopApp)
 	case 'o':
 		var dir string
 		if isParam {
@@ -72,20 +74,16 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 			dir = n[:strings.LastIndex(n, "/")] + "/"
 		}
 
-		pt.pubsub.Pub(dir, pubsub.TopicNewParam)
+		pt.pubsub.Pub(dir, pubsub.TopicCreateParamStart)
 	case 'd':
 		if node != nil && clen == 0 {
 			pt.pubsub.Pub(param, pubsub.TopicDeleteParam)
+			pt.pubsub.Pub(nil, pubsub.TopicAppDraw)
 		}
 	case 'r':
 		if err := pt.Refresh(); err != nil {
-			pt.pubsub.Pub(err, pubsub.TopicUpdateInfoBox)
+			pt.pubsub.Pub(err.Error(), pubsub.TopicWriteInfoBox)
 		}
-	}
-
-	switch event.Key() {
-	case tcell.KeyEnter:
-		node.SetExpanded(!node.IsExpanded())
 	}
 
 	return event

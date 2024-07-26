@@ -14,20 +14,16 @@ import (
 
 // // Function to display information of the selected node
 func (pt *ParameterTree) displayNodeInfo(node *tview.TreeNode) {
-	if node == nil {
-		pt.pubsub.Pub("", pubsub.TopicUpdateInfoBox)
-		pt.pubsub.Pub("", pubsub.TopicUpdateValueBox)
+	if node == nil || len(node.GetChildren()) != 0 {
+		pt.pubsub.Pub("", pubsub.TopicWriteInfoBox)
+		pt.pubsub.Pub("", pubsub.TopicWriteValueBox)
 		return
 	}
-	if len(node.GetChildren()) != 0 {
-		pt.pubsub.Pub("", pubsub.TopicUpdateInfoBox)
-		pt.pubsub.Pub("", pubsub.TopicUpdateValueBox)
-		return
-	}
+
 	param, ok := node.GetReference().(types.Parameter)
 	if !ok {
-		pt.pubsub.Pub("", pubsub.TopicUpdateInfoBox)
-		pt.pubsub.Pub("", pubsub.TopicUpdateValueBox)
+		pt.pubsub.Pub("", pubsub.TopicWriteInfoBox)
+		pt.pubsub.Pub("", pubsub.TopicWriteValueBox)
 		return
 	}
 
@@ -47,8 +43,8 @@ func (pt *ParameterTree) displayNodeInfo(node *tview.TreeNode) {
 
 	param.Value = &s
 
-	go pt.pubsub.Pub(param, pubsub.TopicUpdateValueBox)
-	go pt.pubsub.Pub(info, pubsub.TopicUpdateInfoBox)
+	go pt.pubsub.Pub(param, pubsub.TopicWriteValueBox)
+	go pt.pubsub.Pub(info, pubsub.TopicWriteInfoBox)
 }
 
 func (pt *ParameterTree) Refresh() error {

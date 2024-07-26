@@ -40,9 +40,9 @@ func NewTui(
 		return nil, err
 	}
 
+	cmdbox := cmd.NewCmdBox(ps)
 	infbox := infbox.NewInfoBox(ps)
 	vbox := vbox.NewValueBox(ps)
-	cmdbox := cmd.NewCmdBox(ps)
 
 	layout := layout.NewLayout(pst, infbox, vbox, cmdbox)
 	app.SetRoot(layout, true)

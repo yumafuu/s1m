@@ -7,20 +7,18 @@ type (
 )
 
 const (
-	TopicUpdateInfoBox        = "UpdateInfoBox"
-	TopicUpdateValueBox       = "UpdateValueBox"
-	TopicUpdateValueBoxBorder = "UpdateValueBoxBorder"
-	TopicSetAppFocusValueBox  = "SetFocusValueBox"
-	TopicStopApp              = "Stop"
-	TopicSetAppFocusTree      = "SetFocusTree"
-	TopicAppDraw              = "AppDraw"
-	TopicPutSSMValue          = "PutSSMValue"
-	TopicCreateSSMValue       = "CreateSSMValue"
-	TopicDeleteParam          = "DeleteParam"
-	TopicNewParam             = "NewParam"
-	TopicNewParamCommand      = "NewParamCommand"
-	TopicNewParamSubmit       = "NewParamSubmit"
-	TopicPtreeRefresh         = "PtreeRefresh"
+	TopicWriteInfoBox      = "WriteInfoBox"
+	TopicWriteValueBox     = "WriteValueBox"
+	TopicFocusValueBox     = "SetFocusValueBox"
+	TopicFocusTree         = "SetFocusTree"
+	TopicAppReload         = "AppReload"
+	TopicAppDraw           = "AppDraw"
+	TopicCreateSSMValue    = "CreateSSMValue"
+	TopicUpdateParamStart  = "UpdateParamStart"
+	TopicUpdateParamSubmit = "UpdateParamSubmit"
+	TopicCreateParamStart  = "CreateParamStart"
+	TopicCreateParamSubmit = "CreateParamSubmit"
+	TopicDeleteParam       = "DeleteParam"
 
 	CAPACITY = 30
 )
