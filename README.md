@@ -14,8 +14,8 @@ It allows you to manage your parameters in AWS Parameter Store.
 ---
 
 ## Demo
-<a href="https://gyazo.com/fbd32aa444d68d0b5b394954c2d21e40">
-<img src="https://i.gyazo.com/fbd32aa444d68d0b5b394954c2d21e40.gif" alt="Image from Gyazo" height="800"/>
+<a href="https://i.gyazo.com/1556778fc4d5fa6bcf7abd33ec7d40f5.gif">
+<img src="https://i.gyazo.com/1556778fc4d5fa6bcf7abd33ec7d40f5.gif" alt="Image from Gyazo" height="800"/>
 </a>
 
 ## Features
