@@ -20,12 +20,18 @@ func (v *ValueBox) WorkflowUpdateParam(param ssm.Parameter) {
 	v.TextArea.SetText(*param.Value, true)
 	v.TextArea.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		s := v.GetText()
+		prev := v.GetPrev().Value
+
 		v.param.Value = &s
 
 		if event.Key() == tcell.KeyESC {
 			v.TextArea.SetBorderColor(tcell.ColorDefault)
 			v.pubsub.Pub(nil, pubsub.TopicAppDraw)
-			v.pubsub.Pub(v.param, pubsub.TopicUpdateParamSubmit)
+			if *prev != s {
+				v.pubsub.Pub(v.param, pubsub.TopicUpdateParamSubmit)
+			} else {
+				v.pubsub.Pub(nil, pubsub.TopicFocusTree)
+			}
 		}
 		return event
 	})
