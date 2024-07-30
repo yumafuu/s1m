@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.27.27
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.50.6
 	github.com/cskr/pubsub/v2 v2.0.2
-	github.com/gdamore/tcell/v2 v2.7.1
+	github.com/gdamore/tcell/v2 v2.7.4
 	github.com/rivo/tview v0.0.0-20240524063012-037df494fb76
 )
 
