@@ -17,11 +17,6 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 
 	switch event.Rune() {
 	case 'c':
-		param, ok := currentNode.GetReference().(ssm.Parameter)
-		if !ok {
-			break
-		}
-
 		if currentNode != nil && clen == 0 {
 			var s string
 			if err := clipboard.WriteAll(*param.Value); err != nil {
@@ -32,10 +27,6 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 			pt.pubsub.Pub(s, pubsub.TopicWriteInfoBox)
 		}
 	case 'y':
-		param, ok := currentNode.GetReference().(ssm.Parameter)
-		if !ok {
-			break
-		}
 		if currentNode != nil && clen == 0 {
 			var s string
 			if err := clipboard.WriteAll(*param.Name); err != nil {
