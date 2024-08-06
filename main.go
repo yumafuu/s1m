@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 
 	"github.com/YumaFuu/s1m/aws"
 	"github.com/YumaFuu/s1m/aws/ssm"
@@ -28,6 +27,6 @@ func main() {
 	}
 
 	if err := a.Run(); err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 }
