@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.2.4](https://github.com/yumafuu/s1m/compare/v0.2.3...v0.2.4) - 2024-08-06
+- [fix] checkout token by @yumafuu in https://github.com/yumafuu/s1m/pull/17
+
 ## [v0.2.3](https://github.com/yumafuu/s1m/compare/v0.2.2...v0.2.3) - 2024-08-06
 - [chore] dependabot by @yumafuu in https://github.com/yumafuu/s1m/pull/9
 - Bump github.com/aws/aws-sdk-go-v2/config from 1.27.18 to 1.27.27 by @dependabot in https://github.com/yumafuu/s1m/pull/10
