@@ -52,7 +52,7 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 			// remove Root '.'
 			list = list[1:]
 
-			name := ""
+			name := "/"
 			for _, p := range list {
 				name += p.GetText() + "/"
 			}
