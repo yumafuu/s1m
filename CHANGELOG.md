@@ -1,5 +1,8 @@
 # Changelog
 
+## [v0.2.5](https://github.com/yumafuu/s1m/compare/v0.2.4...v0.2.5) - 2024-08-06
+- [fix] param prefix by @yumafuu in https://github.com/yumafuu/s1m/pull/19
+
 ## [v0.2.4](https://github.com/yumafuu/s1m/compare/v0.2.3...v0.2.4) - 2024-08-06
 - [fix] checkout token by @yumafuu in https://github.com/yumafuu/s1m/pull/17
 
