@@ -1,8 +1,8 @@
 package vbox
 
 import (
+	"github.com/YumaFuu/s1m/aws/ssm"
 	"github.com/YumaFuu/s1m/tui/pubsub"
-	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
@@ -27,7 +27,7 @@ type (
 		Input    *tview.InputField
 		ListView *tview.List
 		pubsub   *pubsub.PubSub
-		param    types.Parameter
+		param    ssm.Parameter
 		mode     Mode
 	}
 )
@@ -89,18 +89,18 @@ func NewValueBox(ps *pubsub.PubSub) *ValueBox {
 		input,
 		listView,
 		ps,
-		types.Parameter{},
+		ssm.Parameter{},
 		ModeDefault,
 	}
 
 	return vbox
 }
 
-func (v *ValueBox) SetPrev(s types.Parameter) {
+func (v *ValueBox) SetPrev(s ssm.Parameter) {
 	v.param = s
 }
 
-func (v *ValueBox) GetPrev() types.Parameter {
+func (v *ValueBox) GetPrev() ssm.Parameter {
 	return v.param
 }
 
@@ -108,7 +108,7 @@ func (v *ValueBox) SetMode(m Mode) {
 	v.mode = m
 }
 
-func (v *ValueBox) SetParam(p types.Parameter) {
+func (v *ValueBox) SetParam(p ssm.Parameter) {
 	v.param = p
 }
 
@@ -126,7 +126,7 @@ func (v *ValueBox) WaitTopic() {
 	for msg := range chUpdate {
 		v.SetMode(ModeUpdate)
 
-		if p, ok := msg.(types.Parameter); ok {
+		if p, ok := msg.(ssm.Parameter); ok {
 			s := *p.Value
 
 			v.TextArea.SetText(s, true)

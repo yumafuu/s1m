@@ -11,8 +11,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	err := aws.ValidAccount(ctx)
-	if err != nil {
+	if err := aws.ValidAccount(ctx); err != nil {
 		panic(err)
 	}
 
