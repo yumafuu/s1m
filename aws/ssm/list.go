@@ -11,12 +11,12 @@ import (
 
 type Parameter = types.Parameter
 
-func (c Client) List(prefix string) ([]types.Parameter, error) {
+func (c Client) List(prefix string) ([]Parameter, error) {
 	ctx := context.TODO()
 
 	params, err := c.getParametersByPath(ctx, prefix)
 	if err != nil {
-		return []types.Parameter{}, err
+		return []Parameter{}, err
 	}
 
 	return params, nil
@@ -25,8 +25,8 @@ func (c Client) List(prefix string) ([]types.Parameter, error) {
 func (c Client) getParametersByPath(
 	ctx context.Context,
 	path string,
-) ([]types.Parameter, error) {
-	var params []types.Parameter
+) ([]Parameter, error) {
+	var params []Parameter
 	input := &ssm.GetParametersByPathInput{
 		Path:           aws.String(path),
 		Recursive:      aws.Bool(true),

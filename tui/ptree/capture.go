@@ -4,21 +4,21 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/YumaFuu/s1m/aws/ssm"
 	"github.com/YumaFuu/s1m/tui/pubsub"
 	"github.com/atotto/clipboard"
-	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
 func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
-	node := pt.GetCurrentNode()
-	param, isParam := node.GetReference().(types.Parameter)
-	clen := len(node.GetChildren())
+	currentNode := pt.GetCurrentNode()
+	param, isParam := currentNode.GetReference().(ssm.Parameter)
+	clen := len(currentNode.GetChildren())
 
 	switch event.Rune() {
 	case 'c':
-		if node != nil && clen == 0 {
+		if currentNode != nil && clen == 0 {
 			var s string
 			if err := clipboard.WriteAll(*param.Value); err != nil {
 				s = fmt.Sprintf("[red]Error copying to clipboard: %s", err)
@@ -28,7 +28,7 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 			pt.pubsub.Pub(s, pubsub.TopicWriteInfoBox)
 		}
 	case 'y':
-		if node != nil && clen == 0 {
+		if currentNode != nil && clen == 0 {
 			var s string
 			if err := clipboard.WriteAll(*param.Name); err != nil {
 				s = fmt.Sprintf("[red]Error copying to clipboard: %s", err)
@@ -39,8 +39,8 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 		}
 
 	case 'i':
-		if node != nil && clen == 0 {
-			param, ok := node.GetReference().(types.Parameter)
+		if currentNode != nil && clen == 0 {
+			param, ok := currentNode.GetReference().(ssm.Parameter)
 			if !ok {
 				break
 			}
@@ -55,11 +55,11 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 			dir = n[:strings.LastIndex(n, "/")] + "/"
 		} else {
 
-			var f func(*tview.TreeNode) *types.Parameter
-			f = func(n *tview.TreeNode) *types.Parameter {
+			var f func(*tview.TreeNode) *ssm.Parameter
+			f = func(n *tview.TreeNode) *ssm.Parameter {
 				for _, p := range n.GetChildren() {
 					if len(p.GetChildren()) == 0 {
-						if param, ok := p.GetReference().(types.Parameter); ok {
+						if param, ok := p.GetReference().(ssm.Parameter); ok {
 							return &param
 						}
 					} else {
@@ -69,14 +69,14 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 				return nil
 			}
 
-			p := f(node)
+			p := f(currentNode)
 			n := *p.Name
 			dir = n[:strings.LastIndex(n, "/")] + "/"
 		}
 
 		pt.pubsub.Pub(dir, pubsub.TopicCreateParamStart)
 	case 'd':
-		if node != nil && clen == 0 {
+		if currentNode != nil && clen == 0 {
 			pt.pubsub.Pub(param, pubsub.TopicDeleteParam)
 			pt.pubsub.Pub(nil, pubsub.TopicAppDraw)
 		}
