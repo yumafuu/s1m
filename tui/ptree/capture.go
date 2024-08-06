@@ -8,16 +8,19 @@ import (
 	"github.com/YumaFuu/s1m/tui/pubsub"
 	"github.com/atotto/clipboard"
 	"github.com/gdamore/tcell/v2"
-	"github.com/rivo/tview"
 )
 
 func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 	currentNode := pt.GetCurrentNode()
-	param, isParam := currentNode.GetReference().(ssm.Parameter)
 	clen := len(currentNode.GetChildren())
 
 	switch event.Rune() {
 	case 'c':
+		param, ok := currentNode.GetReference().(ssm.Parameter)
+		if !ok {
+			break
+		}
+
 		if currentNode != nil && clen == 0 {
 			var s string
 			if err := clipboard.WriteAll(*param.Value); err != nil {
@@ -28,12 +31,16 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 			pt.pubsub.Pub(s, pubsub.TopicWriteInfoBox)
 		}
 	case 'y':
+		param, ok := currentNode.GetReference().(ssm.Parameter)
+		if !ok {
+			break
+		}
 		if currentNode != nil && clen == 0 {
 			var s string
 			if err := clipboard.WriteAll(*param.Name); err != nil {
 				s = fmt.Sprintf("[red]Error copying to clipboard: %s", err)
 			} else {
-				s = fmt.Sprintf("[green]Name `%s` is copied to clipboard", *param.Name)
+				s = fmt.Sprintf("[green]`%s` is copied to clipboard", *param.Name)
 			}
 			pt.pubsub.Pub(s, pubsub.TopicWriteInfoBox)
 		}
@@ -49,33 +56,30 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 			pt.pubsub.Pub(nil, pubsub.TopicAppDraw)
 		}
 	case 'o':
+		param, isParam := currentNode.GetReference().(ssm.Parameter)
 		var dir string
 		if isParam {
 			n := *param.Name
 			dir = n[:strings.LastIndex(n, "/")] + "/"
 		} else {
 
-			var f func(*tview.TreeNode) *ssm.Parameter
-			f = func(n *tview.TreeNode) *ssm.Parameter {
-				for _, p := range n.GetChildren() {
-					if len(p.GetChildren()) == 0 {
-						if param, ok := p.GetReference().(ssm.Parameter); ok {
-							return &param
-						}
-					} else {
-						f(p)
-					}
-				}
-				return nil
-			}
+			list := pt.GetPath(currentNode)
+			// remove Root '.'
+			list = list[1:]
 
-			p := f(currentNode)
-			n := *p.Name
-			dir = n[:strings.LastIndex(n, "/")] + "/"
+			name := ""
+			for _, p := range list {
+				name += p.GetText() + "/"
+			}
+			dir = name[:strings.LastIndex(name, "/")] + "/"
 		}
 
 		pt.pubsub.Pub(dir, pubsub.TopicCreateParamStart)
 	case 'd':
+		param, ok := currentNode.GetReference().(ssm.Parameter)
+		if !ok {
+			break
+		}
 		if currentNode != nil && clen == 0 {
 			pt.pubsub.Pub(param, pubsub.TopicDeleteParam)
 			pt.pubsub.Pub(nil, pubsub.TopicAppDraw)
