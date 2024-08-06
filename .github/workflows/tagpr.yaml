@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.TAP_GITHUB_TOKEN }}
     - uses: Songmu/tagpr@v1
       env:
         GITHUB_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
