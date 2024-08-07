@@ -1,4 +1,4 @@
-name: golangci-lint
+name: go test
 
 permissions:
   contents: read
@@ -26,8 +26,5 @@ jobs:
           go-version-file: go.mod
           cache: true
 
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: v1.59
-
+      - name: go test
+        run: go test -p 4 ./...
