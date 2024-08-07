@@ -26,6 +26,7 @@ func (v *ValueBox) WorkflowUpdateParam(param ssm.Parameter) {
 
 		if event.Key() == tcell.KeyESC {
 			v.TextArea.SetBorderColor(tcell.ColorDefault)
+			v.TextArea.SetTitle("")
 			v.pubsub.Pub(nil, pubsub.TopicAppDraw)
 			if *prev != s {
 				v.pubsub.Pub(v.param, pubsub.TopicUpdateParamSubmit)
@@ -90,6 +91,7 @@ func (v *ValueBox) WorkflowCreateParam(dir string) {
 		if event.Key() == tcell.KeyESC {
 			v.TextArea.SetBorderColor(tcell.ColorDefault)
 
+			v.TextArea.SetTitle("")
 			v.pubsub.Pub(nil, pubsub.TopicAppDraw)
 			v.pubsub.Pub(v.param, pubsub.TopicCreateParamSubmit)
 		}
