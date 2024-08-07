@@ -22,7 +22,7 @@ func (pt *ParameterTree) InputCapture(event *tcell.EventKey) *tcell.EventKey {
 			if err := clipboard.WriteAll(*param.Value); err != nil {
 				s = fmt.Sprintf("[red]Error copying to clipboard: %s", err)
 			} else {
-				s = "[green]Value is copied to clipboard"
+				s = fmt.Sprintf("[green]`%s` is copied to clipboard", *param.Value)
 			}
 			pt.pubsub.Pub(s, pubsub.TopicWriteInfoBox)
 		}
