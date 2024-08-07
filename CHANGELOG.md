@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.2.6](https://github.com/yumafuu/s1m/compare/v0.2.5...v0.2.6) - 2024-08-07
+- [fix] valuebox title by @yumafuu in https://github.com/yumafuu/s1m/pull/21
+- [add] test ci by @yumafuu in https://github.com/yumafuu/s1m/pull/23
+
 ## [v0.2.5](https://github.com/yumafuu/s1m/compare/v0.2.4...v0.2.5) - 2024-08-06
 - [fix] param prefix by @yumafuu in https://github.com/yumafuu/s1m/pull/19
 
