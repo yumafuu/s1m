@@ -1,5 +1,7 @@
 # Changelog
 
+## [v0.2.7](https://github.com/yumafuu/s1m/compare/v0.2.6...v0.2.7) - 2024-08-07
+
 ## [v0.2.6](https://github.com/yumafuu/s1m/compare/v0.2.5...v0.2.6) - 2024-08-07
 - [fix] valuebox title by @yumafuu in https://github.com/yumafuu/s1m/pull/21
 - [add] test ci by @yumafuu in https://github.com/yumafuu/s1m/pull/23
