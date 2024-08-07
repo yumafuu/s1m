@@ -7,7 +7,9 @@ S1M is AWS Parameter Store TUI tool.
 
 It allows you to manage your parameters in AWS Parameter Store.
 
-[![GitHub release](https://img.shields.io/github/v/release/yumafuu/s1m)]()
+![Release](https://github.com/yumafuu/s1m/actions/workflows/release.yaml/badge.svg)
+![Test](https://github.com/yumafuu/s1m/actions/workflows/test.yaml/badge.svg)
+
 
 </div>
 
