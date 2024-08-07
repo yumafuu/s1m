@@ -49,10 +49,10 @@ s1m inspired by vim key bindings.
 
 ```bash
 # Homebrew
-brew install YumaFuu/tap/s1m
+brew install yumafuu/tap/s1m
 
 # Go
-go install github.com/YumaFuu/s1m@latest
+go install github.com/yumafuu/s1m@latest
 ```
 
 ---
