@@ -12,3 +12,6 @@ registries:
 packages:
 - name: goreleaser/goreleaser@v2.1.0
 - name: golangci/golangci-lint@v1.59.1
+- name: suzuki-shunsuke/ghalint@v0.2.12
+- name: suzuki-shunsuke/pinact@v0.2.1
+- name: suzuki-shunsuke/ghatm@v0.3.1
