@@ -3,13 +3,18 @@ on:
   push:
     branches: ["main"]
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
   tagpr:
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
       with:
         token: ${{ secrets.TAP_GITHUB_TOKEN }}
-    - uses: Songmu/tagpr@v1
+    - uses: Songmu/tagpr@0a9b8e6634db66e773516828c1359dc6e9e8b484 # v1.3.0
       env:
         GITHUB_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
