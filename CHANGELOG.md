@@ -1,5 +1,8 @@
 # Changelog
 
+## [v1.0.1](https://github.com/yumafuu/s1m/compare/v1.0.0...v1.0.1) - 2024-08-11
+- [fix] goreleaser by @yumafuu in https://github.com/yumafuu/s1m/pull/28
+
 ## [v0.2.7](https://github.com/yumafuu/s1m/compare/v0.2.6...v0.2.7) - 2024-08-11
 - Release for v1.0.0 by @yumafuu in https://github.com/yumafuu/s1m/pull/24
 - [add] ghalint by @yumafuu in https://github.com/yumafuu/s1m/pull/26
