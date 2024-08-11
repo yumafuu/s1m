@@ -1,14 +1,13 @@
-package main
+package tui
 
 import (
 	"context"
 
 	"github.com/YumaFuu/s1m/aws"
 	"github.com/YumaFuu/s1m/aws/ssm"
-	"github.com/YumaFuu/s1m/tui"
 )
 
-func main() {
+func Run() {
 	ctx := context.Background()
 
 	if err := aws.ValidAccount(ctx); err != nil {
@@ -20,7 +19,7 @@ func main() {
 		panic(err)
 	}
 
-	a, err := tui.NewTui(client)
+	a, err := NewTui(client)
 	if err != nil {
 		panic(err)
 	}
