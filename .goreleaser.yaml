@@ -16,6 +16,7 @@ builds:
   - env:
       - CGO_ENABLED=0
     binary: s1m
+    main: ./cmd/cli/
     ldflags:
       - -s -w
       - -X main.Version=v{{.Version}}
