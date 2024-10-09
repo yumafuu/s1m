@@ -1,5 +1,19 @@
 # Changelog
 
+## [v1.0.2](https://github.com/yumafuu/s1m/compare/v1.0.1...v1.0.2) - 2024-10-09
+- Bump github.com/aws/aws-sdk-go-v2/service/ssm from 1.50.6 to 1.52.4 by @dependabot in https://github.com/yumafuu/s1m/pull/30
+- Bump github.com/aws/aws-sdk-go-v2 from 1.30.3 to 1.30.4 by @dependabot in https://github.com/yumafuu/s1m/pull/37
+- Bump github.com/aws/aws-sdk-go-v2/service/ssm from 1.52.4 to 1.52.6 by @dependabot in https://github.com/yumafuu/s1m/pull/39
+- Bump github.com/aws/aws-sdk-go-v2/config from 1.27.27 to 1.27.31 by @dependabot in https://github.com/yumafuu/s1m/pull/40
+- Bump github.com/aws/aws-sdk-go-v2 from 1.30.4 to 1.30.5 by @dependabot in https://github.com/yumafuu/s1m/pull/43
+- Bump github.com/aws/aws-sdk-go-v2/service/ssm from 1.52.6 to 1.53.0 by @dependabot in https://github.com/yumafuu/s1m/pull/45
+- Bump github.com/aws/aws-sdk-go-v2/config from 1.27.31 to 1.27.36 by @dependabot in https://github.com/yumafuu/s1m/pull/46
+- Bump github.com/aws/aws-sdk-go-v2/service/ssm from 1.53.0 to 1.55.0 by @dependabot in https://github.com/yumafuu/s1m/pull/52
+- Bump github.com/aws/aws-sdk-go-v2 from 1.32.0 to 1.32.2 by @dependabot in https://github.com/yumafuu/s1m/pull/53
+- [fix] README by @yumafuu in https://github.com/yumafuu/s1m/pull/55
+- Bump github.com/aws/aws-sdk-go-v2/config from 1.27.36 to 1.27.43 by @dependabot in https://github.com/yumafuu/s1m/pull/54
+- [add] aqua by @yumafuu in https://github.com/yumafuu/s1m/pull/56
+
 ## [v1.0.1](https://github.com/yumafuu/s1m/compare/v1.0.0...v1.0.1) - 2024-08-11
 - [fix] goreleaser by @yumafuu in https://github.com/yumafuu/s1m/pull/28
 
