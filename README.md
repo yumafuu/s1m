@@ -52,6 +52,9 @@ brew install yumafuu/tap/s1m
 
 # Go
 go install github.com/yumafuu/s1m@latest
+
+# aqua
+aqua g -i yumafuu/s1m
 ```
 
 ---
