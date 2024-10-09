@@ -32,16 +32,16 @@ It allows you to manage your parameters in AWS Parameter Store.
 
 s1m inspired by vim key bindings.
 
-| Key     | Description                                 |
-|---------|---------------------------------------------|
-| `j`     | Move down                                   |
-| `k`     | Move up                                     |
-| `i`     | Edit Parameter under the cursor             |
-| `d`     | Delete Parameter under the cursor           |
-| `o`     | Create new Parameter                        |
-| `c`     | Copy the Value under the cursor             |
-| `y`     | Copy the Name of Parameter under the cursor |
-| `<ESC>` | Exit from the input box                     |
+| Key     | Description                                  |
+|---------|----------------------------------------------|
+| `j`     | Move down                                    |
+| `k`     | Move up                                      |
+| `i`     | Edit Parameter under the cursor              |
+| `d`     | Delete Parameter under the cursor            |
+| `o`     | Create new Parameter                         |
+| `c`     | Copy the Value of Parameter under the cursor |
+| `y`     | Copy the Name of Parameter under the cursor  |
+| `<ESC>` | Exit from the input box                      |
 
 
 ## Installation
