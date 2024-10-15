@@ -6,7 +6,7 @@ require (
 	github.com/atotto/clipboard v0.1.4
 	github.com/aws/aws-sdk-go-v2 v1.32.2
 	github.com/aws/aws-sdk-go-v2/config v1.27.43
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.55.0
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.55.2
 	github.com/cskr/pubsub/v2 v2.0.2
 	github.com/davecgh/go-spew v1.1.1
 	github.com/gdamore/tcell/v2 v2.7.4
