@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.0.3](https://github.com/yumafuu/s1m/compare/v1.0.2...v1.0.3) - 2024-10-24
+- Bump github.com/aws/aws-sdk-go-v2/service/ssm from 1.55.0 to 1.55.2 by @dependabot in https://github.com/yumafuu/s1m/pull/57
+- Bump github.com/aws/aws-sdk-go-v2/config from 1.27.43 to 1.28.0 by @dependabot in https://github.com/yumafuu/s1m/pull/59
+
 ## [v1.0.2](https://github.com/yumafuu/s1m/compare/v1.0.1...v1.0.2) - 2024-10-09
 - Bump github.com/aws/aws-sdk-go-v2/service/ssm from 1.50.6 to 1.52.4 by @dependabot in https://github.com/yumafuu/s1m/pull/30
 - Bump github.com/aws/aws-sdk-go-v2 from 1.30.3 to 1.30.4 by @dependabot in https://github.com/yumafuu/s1m/pull/37
