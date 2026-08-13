@@ -1,3 +1,5 @@
+
+
 <div align="center">
 <img height="300" alt="s1m logo" src="https://raw.githubusercontent.com/yumafuu/s1m/main/.github/assets/gopher.png">
 
@@ -41,6 +43,7 @@ s1m inspired by vim key bindings.
 | `o`     | Create new Parameter                         |
 | `c`     | Copy the Value of Parameter under the cursor |
 | `y`     | Copy the Name of Parameter under the cursor  |
+| `r`     | Refresh the parameter list                   |
 | `<ESC>` | Exit from the input box                      |
 
 
